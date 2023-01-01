@@ -19,7 +19,7 @@ import os, processing, math, time
 
 #working directory, see https://stackoverflow.com/a/65543293/729221
 from console.console import _console
-dir = _console.console.tabEditorWidget.currentWidget().path.replace("parking_lanes.py","")
+dir = _console.console.tabEditorWidget.currentWidget().path.replace("street_parking.py","")
 dir_input = dir + 'data/input.geojson'
 dir_output = dir + 'data/output/'
 
@@ -1780,7 +1780,7 @@ if layers:
     layer_parking = clearAttributes(layer_parking, parking_attribute_list)
 
     print(time.strftime('%H:%M:%S', time.localtime()), 'Save street parking features...')
-    qgis.core.QgsVectorFileWriter.writeAsVectorFormat(layer_parking, dir_output + 'parking_lanes.geojson', 'utf-8', QgsCoordinateReferenceSystem(crs_to), save_options.driverName)
+    qgis.core.QgsVectorFileWriter.writeAsVectorFormat(layer_parking, dir_output + 'street_parking_lines.geojson', 'utf-8', QgsCoordinateReferenceSystem(crs_to), save_options.driverName)
 
     #add street parking to map
     layer_no_parking.setName('no street parking')
@@ -1821,7 +1821,7 @@ if layers:
         layer_parking_chain.loadNamedStyle(dir + 'styles/parking_chain.qml')
 
         print(time.strftime('%H:%M:%S', time.localtime()), 'Save parking points...')
-        qgis.core.QgsVectorFileWriter.writeAsVectorFormat(layer_parking_chain, dir_output + 'parking_points.geojson', 'utf-8', QgsCoordinateReferenceSystem(crs_to), save_options.driverName)
+        qgis.core.QgsVectorFileWriter.writeAsVectorFormat(layer_parking_chain, dir_output + 'street_parking_points.geojson', 'utf-8', QgsCoordinateReferenceSystem(crs_to), save_options.driverName)
 
     #focus on parking layer
     iface.mapCanvas().setExtent(layer_parking.extent())
