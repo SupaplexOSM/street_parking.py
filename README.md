@@ -17,7 +17,7 @@ Python script for QGIS to generate street parking data from OpenStreetMap data
 
 ## Results
 
-The script generates georeferenced line features representing street parking lanes. The lines are rendered in QGIS with a basic styling and can afterwards be further edited or spatially analysed as required.
+The script generates georeferenced line features representing street parking lanes. The lines are rendered in QGIS with a basic styling and can afterwards be further edited or spatially analysed as required. To understand, how the results are interpolated, some "cutting" areas and features are also rendered.
 
 The **attributes** include key parking information such as the capacity of a parking lane (number of parked vehicles), orientation and position (e.g. parallel or diagonal, on the carriageway, on the pavement, in a parking bay etc.), parking restrictions (free, paid, residents, time limited, disabled, temporary no parking, vehicle restrictions etc.) as well as other information (e.g. surface, parking zone, markings...) if this information is mapped in OSM.
 
@@ -31,14 +31,15 @@ The **attributes** include key parking information such as the capacity of a par
 
 ## Notes
 
-- Directory: Make sure that the following directory structure exists.
+- Directory: Make sure that there is no folder containing the string "street_parking.py" in the directory path (but the script itself is called exactly that) and that the following directory structure exists:
 
   ```
   └ your-directory
     ├ data/
     ┊ └ input.geojson
-    └ styles/
-      └ [various style files for basic rendering].qml
+    ├ styles/
+    ┊ └ [various style files for basic rendering].qml
+    └ street_parking.py
   ```
 
 - Coordinate Reference System: Results are saved in EPSG:25833 (ETRS89 / UTM zone 33N). A different CRS may be necessary at other locations and can be set at the top of the script.
@@ -50,6 +51,10 @@ The **attributes** include key parking information such as the capacity of a par
 - This script is working for countries with right hand traffic. In countries with left hand traffic, some adjustments might be necessary (not tested/supported yet)
 
 - Background: This script was originally based on very basic programming and QGIS knowledge. Many steps have been solved more effectively in the meantime, but there are more that can certainly be solved much more elegantly. Plus there are still some (marked) TODO's that would make it even better. I am happy about improvements and extensions!
+
+## Methodology - OSM Street Parking Project
+
+There is a detailed [https://parkraum.osm-verkehrswende.org/project-prototype-neukoelln/report](report about the methodology of OSM street parking analysis) in German language as well as a shorter [https://www.openstreetmap.org/user/Supaplex030/diary/396104](english blog post). This is also the base of the [https://parkraum.osm-verkehrswende.org/project-vector-tiles/](OSM Street Parking Project), which has further automated this methodology and made the interpolation of OSM street parking data more scalable.
 
 ## Example Images
 
