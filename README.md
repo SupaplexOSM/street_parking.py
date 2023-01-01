@@ -23,7 +23,7 @@ The **attributes** include key parking information such as the capacity of a par
 
 ## Features
 
-- Calculation of parking lanes according to the [https://wiki.openstreetmap.org/wiki/Street_parking](OSM Street parking scheme)
+- Calculation of parking lanes according to the [OSM Street parking scheme](https://wiki.openstreetmap.org/wiki/Street_parking)
 - Interpolation of intersection areas and inclusion of driveways, traffic lights, crossings, bus stops and some other spatial features that influence parking
 - Including separately mapped street parking areas (e.g. street-side parking bays)
 - Basic interpretation of parking restrictions
@@ -54,7 +54,7 @@ The **attributes** include key parking information such as the capacity of a par
 
 ## Methodology - OSM Street Parking Project
 
-There is a detailed (report about the methodology of OSM street parking analysis)[https://parkraum.osm-verkehrswende.org/project-prototype-neukoelln/report] in German language as well as a shorter (english blog post)[https://www.openstreetmap.org/user/Supaplex030/diary/396104]. This is also the base of the (OSM Street Parking Project)[https://parkraum.osm-verkehrswende.org/project-vector-tiles/], which has further automated this methodology and made the interpolation of OSM street parking data more scalable.
+There is a detailed [report about the methodology of OSM street parking analysis](https://parkraum.osm-verkehrswende.org/project-prototype-neukoelln/report) in German language as well as a shorter [english blog post](https://www.openstreetmap.org/user/Supaplex030/diary/396104). This is also the base of the [OSM Street Parking Project](https://parkraum.osm-verkehrswende.org/project-vector-tiles/), which has further automated this methodology and made the interpolation of OSM street parking data more scalable.
 
 ## Example Images
 
