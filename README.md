@@ -54,7 +54,7 @@ The **attributes** include key parking information such as the capacity of a par
 
 ## Methodology - OSM Street Parking Project
 
-There is a detailed [https://parkraum.osm-verkehrswende.org/project-prototype-neukoelln/report](report about the methodology of OSM street parking analysis) in German language as well as a shorter [https://www.openstreetmap.org/user/Supaplex030/diary/396104](english blog post). This is also the base of the [https://parkraum.osm-verkehrswende.org/project-vector-tiles/](OSM Street Parking Project), which has further automated this methodology and made the interpolation of OSM street parking data more scalable.
+There is a detailed (report about the methodology of OSM street parking analysis)[https://parkraum.osm-verkehrswende.org/project-prototype-neukoelln/report] in German language as well as a shorter (english blog post)[https://www.openstreetmap.org/user/Supaplex030/diary/396104]. This is also the base of the (OSM Street Parking Project)[https://parkraum.osm-verkehrswende.org/project-vector-tiles/], which has further automated this methodology and made the interpolation of OSM street parking data more scalable.
 
 ## Example Images
 
