@@ -58,3 +58,5 @@ There is a detailed [https://parkraum.osm-verkehrswende.org/project-prototype-ne
 
 ## Example Images
 
+![street parking lines](https://raw.githubusercontent.com/SupaplexOSM/street_parking.py/main/sample%20images/street%20parking%20lines.png)
+![street parking points](https://raw.githubusercontent.com/SupaplexOSM/street_parking.py/main/sample%20images/street%20parking%20points.png)
