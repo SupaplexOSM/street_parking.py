@@ -1,0 +1,30 @@
+2023-01-01 * Renamed script "street_parking.py" (instead of "parking_lanes.py")
+2022-12-30 ! Fixed error in capacity calculation for divided segments with tagged capacity
+2022-12-30 + Missing highway and side attributes for separately mapped parking features are adopted from nearby streets
+2022-12-30 + Width of separately mapped areas are derived from geometry and missing orientations interpolated on this base
+2022-12-28 + Script includes separately mapped parking nodes
+2022-12-27 * Reworked/simplified street parking styling, colorized parking restrictions/conditions
+2022-12-27 ! Missing capacities of separately mapped areas are derived by their size, if orientation is missing and orientation isn't derived by their geometry
+2022-12-27 ! Include parking segments without orientation or parking attribute
+2022-12-25 + Script interprets parking restrictions/conditions and provide them as a condition class attribute
+2022-12-18 * Reworked script to fit the new OSM street parking scheme, merged parking and position attribute
+2022-06-30 ! For calculations with "width": checks whether it is a numerical value
+2022-06-25 + Added error if input file don't exist
+2022-06-23 + Added processing for facilities on the carriageway (bicycle parking, parkletts)
+2022-06-22 + Added processing for separately mapped street side/lane parking
+2022-06-18 * Extremely optimised data preparation (script runtime reduced more than 8 times)
+2022-06-10 * Identifier for the side of the street (right/left/separate) is stored as a new attribute and not as a suffix of the ID
+2022-06-09 + Added processing and buffer rendering of bus stops
+2022-06-09 * Road segments without parking lanes are stored separately instead of simply being deleted
+2022-06-03 + [Overpass Query] Added an BBOX-by-coordinates option and bus stops in the overpass query
+2022-06-03 * Updated styles/parking_lanes.qml for correct rendering of reverse parking lane line directions (see below)
+2022-06-03 * Reverse parking lane line directions to get lines pointing in the same direction as the traffic flow (for right-hand traffic)
+2022-06-03 + Added crossing:buffer_protection to crossing types that are buffered
+2022-06-03 * Variables instead of fixed values for buffer radii
+2022-02-02 ! Fixed imports and set path within Python
+2021-06-18 + Added support/attribute for parking:condition:...:vehicles
+2021-03-11 + Added new method to correctly exclude parking lanes in the intersection area
+2021-03-11 + Added note on inclusion of separately mapped parking spaces
+2021-03-11 ! Fixed that parking point chain was only displayed, but could not be moved, used or saved
+2021-03-11 ! Fixed parking point chain offset from street_side parking lanes
+2021-03-11 ! Fixed "time.strftime"-error under certain rare circumstances in def prepareParkingLane (rearranged processing print outputs)
