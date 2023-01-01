@@ -1,5 +1,5 @@
 # street_parking.py for QGIS
-Python script for QGIS to generate street parking data from OpenStreetMap data
+**Python script for QGIS to generate street parking data from OpenStreetMap (OSM) data**
 
 ## How to use
 
