@@ -10,9 +10,8 @@
    1. (If internal Python Editor Panel is hidden: Right click in Console => "Show Editor")
    1. Open File in QGIS Python Editor
    1. Run from there (Note: Do _not_ use the "Browser" => File => "Run Script")
-4. Some optional steps for quality assurance should be done afterwards:
-   - Check the resulting parking lane data for bugs, depending on how accurate you need it to be. Street side and kerb parking as well as street segments with diagonal or perpendicular parking have the highest potential for accuracy failures, depending on how accurately the OSM data is mapped.
-   - Locate objects that affect parking in parking lanes (e.g. street lamps or trees in the parking lane area, street furniture in kerbside parking) and cut them off from the parking lane segments.
+
+Check the resulting street parking data for accuracy and bugs, depending on how precise you need them. Street side and kerb parking as well as street segments with diagonal or perpendicular parking have the highest potential for accuracy failures, depending on how accurately the OSM data is mapped. Objects and street furniture that affect parking (e.g. street furniture in kerbside parking) can be tagged with `obstacle:parking=yes` to cut them off from the street parking segments automatically.
 
 
 ## Results
