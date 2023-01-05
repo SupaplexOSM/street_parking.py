@@ -1,5 +1,5 @@
 2023-01-05 + Objects that are tagged with "obstacle:parking=yes" are cutted from street parking segments (important esp. for on kerb parking)
-2023-01-05 + Include bicycle renting stations on lane as well as bicycle parking features on kerb extensions to cut street parking segments
+2023-01-05 + Include bicycle renting stations on lane, non-motorized vehcile parking features on kerb extensions and restricted highway areas to cut street parking segments
 2023-01-01 * Renamed script "street_parking.py" (instead of "parking_lanes.py")
 2022-12-30 ! Fixed error in capacity calculation for divided segments with tagged capacity
 2022-12-30 + Missing highway and side attributes for separately mapped parking features are adopted from nearby streets
