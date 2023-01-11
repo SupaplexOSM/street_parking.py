@@ -3,7 +3,7 @@
 
 ## How to use
 
-1. Run [Overpass-Query](https://overpass-turbo.eu/s/1pKm) for road network and street parking data
+1. Run [Overpass-Query](https://overpass-turbo.eu/s/1q1g) for road network and street parking data
 2. Export result as GeoJSON to 'data/input.geojson'
 3. Run this python script in QGIS
    1. "Plugins" => "Python Console"
@@ -11,8 +11,7 @@
    1. Open File in QGIS Python Editor
    1. Run from there (Note: Do _not_ use the "Browser" => File => "Run Script")
 
-Check the resulting street parking data for accuracy and bugs, depending on how precise you need them. Street side and kerb parking as well as street segments with diagonal or perpendicular parking have the highest potential for accuracy failures, depending on how accurately the OSM data is mapped. Objects and street furniture that affect parking (e.g. street furniture in kerbside parking) can be tagged with `obstacle:parking=yes` to cut them off from the street parking segments automatically.
-
+Check the resulting street parking data for accuracy and bugs, depending on how precise you need them. Street side and kerb parking as well as street segments with diagonal or perpendicular parking have the highest potential for accuracy failures, depending on how accurately the OSM data is mapped.
 
 ## Results
 
