@@ -2,11 +2,11 @@
 #   Parking lane analysis with OSM data                                        #
 #------------------------------------------------------------------------------#
 #   OSM data processing for QGIS/PyGIS to generate street parking data.        #
-#   Run this Overpass query -> https://overpass-turbo.eu/s/1pKm                #
+#   Run this Overpass query -> https://overpass-turbo.eu/s/1q1g                #
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2023-01-05                                                 #
+#   > version/date: 2023-01-11                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -69,6 +69,8 @@ buffer_crossing_marked    = 2   #2   //on other marked crossings
 buffer_crossing_protected = 3   #3   //on crossings protected by buffer markings, kerb extensions etc.
 buffer_bus_stop           = 15  #15  //at bus stops
 buffer_bus_stop_range     = 2   #2   //Distance where segments with parking lanes are searched for cutting at bus stops (must always be >= than "buffer_bus_stop")
+buffer_turning_circle     = 10  #10  //at turning circles
+buffer_turning_loop       = 15  #15  //at turning loops
 
 process_parking_obstacles   = True # If True, parking segments are cutted where lane installations and obstacles are located (on lane bicycle parking, parkletts, street furniture marked as obstacles...)
 process_separate_parking    = True # If True, separately mapped street parking areas and nodes are included and converted into lines that fit as closely as possible
@@ -131,6 +133,7 @@ parking_attribute_list = [
 'source:capacity',
 'surface',
 'markings',
+'markings:type',
 'width',
 'condition_class',
 'vehicle_designated',
@@ -512,6 +515,7 @@ def prepareParkingLane(layer, side, clean):
     id_source_capacity = layer.fields().indexOf('source:capacity')
     id_surface = layer.fields().indexOf('surface')
     id_markings = layer.fields().indexOf('markings')
+    id_markings_type = layer.fields().indexOf('markings:type')
     id_width = layer.fields().indexOf('width')
     id_offset = layer.fields().indexOf('offset')
     id_condition_class = layer.fields().indexOf('condition_class')
@@ -529,6 +533,7 @@ def prepareParkingLane(layer, side, clean):
         source_capacity = NULL
         surface = NULL
         markings = NULL
+        markings_type = NULL
         width = NULL
         condition_class = NULL
         vehicle_designated = vehicle_excluded = NULL
@@ -551,7 +556,7 @@ def prepareParkingLane(layer, side, clean):
                         error_new += f_string[:f_stop]
         error = error_new
 
-        #Parkstreifeninfos auslesen
+        #read base attributes for parking (reading "both" not necessary, since "fillBaseAttributes" already splitted attributes to left and right for parking, orientation and width)
         if side == 'left' and id_left != -1:
             parking = feature.attribute('parking:left')
             orientation = feature.attribute('parking:left:orientation')
@@ -573,15 +578,17 @@ def prepareParkingLane(layer, side, clean):
         offset = feature.attribute('parking:' + side + ':offset')
 
         #surface: get from highway, if not specified for parking lane
-        if layer.fields().indexOf('parking:' + side + ':surface') != -1:
-            surface = feature.attribute('parking:' + side + ':surface')
+        surface = getSideAttribute(layer, feature, side, 'surface', 0)
         if not surface:
             highway_surface = feature.attribute('highway:surface')
             if highway_surface:
                 surface = highway_surface
 
-        if layer.fields().indexOf('parking:' + side + ':markings') != -1:
-            markings = feature.attribute('parking:' + side + ':markings')
+        #read markings
+        markings = getSideAttribute(layer, feature, side, 'markings', 0)
+        markings_type = getSideAttribute(layer, feature, side, 'markings:type', 0)
+
+        #read width (reading "both" not necessary, since "fillBaseAttributes" already splitted attributes to left and right for parking, orientation and width)
         width = feature.attribute('parking:' + side + ':width')
 
         capacity = getSideAttribute(layer, feature, side, 'capacity', 0)
@@ -606,6 +613,7 @@ def prepareParkingLane(layer, side, clean):
         layer.changeAttributeValue(feature.id(), id_source_capacity, source_capacity)
         layer.changeAttributeValue(feature.id(), id_surface, surface)
         layer.changeAttributeValue(feature.id(), id_markings, markings)
+        layer.changeAttributeValue(feature.id(), id_markings_type, markings_type)
         layer.changeAttributeValue(feature.id(), id_width, width)
         layer.changeAttributeValue(feature.id(), id_offset, offset)
         layer.changeAttributeValue(feature.id(), id_condition_class, condition_class)
@@ -1093,6 +1101,35 @@ def bufferCrossing(layer_parking, layer_points, side):
 
 
 
+def bufferTurningCircles(layer_parking, layer_points, side):
+#-------------------------------------------------------------------------------
+# Removes parts from street parking layer at turning circles and loops.
+#-------------------------------------------------------------------------------
+# > layer_parking: The affected street parking layer.
+# > layer_points: Layer with point data for turning circles and loops.
+# > side: The affected side of the street (left, right or both)
+#-------------------------------------------------------------------------------
+
+    #generate buffers for circles and loops
+    processing.run('qgis:selectbyexpression', {'INPUT' : layer_points, 'EXPRESSION' : '\"highway\" = \'turning_circle\''})
+    buffer01 = processing.run('native:buffer', {'DISTANCE' : buffer_turning_circle, 'INPUT' : QgsProcessingFeatureSourceDefinition(layer_points.id(), selectedFeaturesOnly=True), 'OUTPUT': 'memory:'})['OUTPUT']
+    processing.run('qgis:selectbyexpression', {'INPUT' : layer_points, 'EXPRESSION' : '\"highway\" = \'turning_loop\''})
+    buffer02 = processing.run('native:buffer', {'DISTANCE' : buffer_turning_loop, 'INPUT' : QgsProcessingFeatureSourceDefinition(layer_points.id(), selectedFeaturesOnly=True), 'OUTPUT': 'memory:'})['OUTPUT']
+
+    #merge buffers and cut street parking segments
+    buffer = processing.run('native:mergevectorlayers', {'LAYERS' : [buffer01,buffer02], 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_parking = processing.run('native:difference', {'INPUT' : layer_parking, 'OVERLAY' : buffer, 'OUTPUT': 'memory:'})['OUTPUT']
+
+    #show buffers on map
+    QgsProject.instance().addMapLayer(buffer, False)
+    group_buffer.insertChildNode(0, QgsLayerTreeLayer(buffer))
+    buffer.loadNamedStyle(dir + 'styles/buffer_dashed.qml')
+    buffer.setName('turning circles/loops')
+
+    return(layer_parking)
+
+
+
 def bufferBusStop(layer_parking, layer_points, layer_virtual_kerb):
 #-------------------------------------------------------------------------------
 # Removes parts from street  parking layers in the area of bus stops (buffer
@@ -1154,7 +1191,7 @@ def bufferBusStop(layer_parking, layer_points, layer_virtual_kerb):
 
 
 
-def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, layer_virtual_kerb):
+def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, layer_snap):
 #-------------------------------------------------------------------------------
 # Cut street parking segments where lane installations and obstacles are located
 # (on lane bicycle parking, parkletts, street furniture marked as obstacles...)
@@ -1162,7 +1199,7 @@ def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, l
 # > layer_parking: The affected street parking layer.
 # > layer_polygons: The polygon layer containing installations of interest (see below)
 # > layer_points: The point layer containing installations of interest (see below)
-# > layer_virtual_kerb: Snap installations of interest to this geometries.
+# > layer_snap: Snap installations of interest to this geometries (virtual kerb lines or parking segments).
 #-------------------------------------------------------------------------------
 # > installations of interest:
 # amenity=bicycle_parking + bicycle_parking:position=lane / street_side / kerb_extension
@@ -1170,7 +1207,9 @@ def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, l
 # amenity=small_electric_vehicle_parking + small_electric_vehicle_parking:position=lane / street_side / kerb_extension
 # amenity=bicycle_rental + bicycle_rental:position=lane / street_side / kerb_extension
 # leisure=parklet
+# amenity=loading_ramp
 # leisure=outdoor_seating + outdoor_seating=parklet
+# traffic_calming=kerb_extension
 # area:highway=prohibited
 # and all objects tagged with obstacle:parking=yes
 #-------------------------------------------------------------------------------
@@ -1187,22 +1226,26 @@ def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, l
     buffer_bicycle_parking  = 1.6 #per stand - per capacity / 2
     buffer_sev_parking      = 5.0 #small electric vehicle parking
     buffer_parklet          = 5.0
+    buffer_loading_ramp     = 2.0
 
-    #extract installations/obstacles of interest from polygon input
-    layer_obstacles_areas = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_polygons, 'EXPRESSION' : '("amenity" = \'bicycle_parking\' AND ("bicycle_parking:position" = \'lane\' OR "bicycle_parking:position" = \'street_side\' OR "bicycle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'motorcycle_parking\' AND ("parking" = \'lane\' OR "parking" = \'street_side\' OR "parking" = \'kerb_extension\')) OR ("amenity" = \'small_electric_vehicle_parking\' AND ("small_electric_vehicle_parking:position" = \'lane\' OR "small_electric_vehicle_parking:position" = \'street_side\' OR "small_electric_vehicle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'bicycle_rental\' AND ("bicycle_rental:position" = \'lane\' OR "bicycle_rental:position" = \'street_side\' OR "bicycle_rental:position" = \'kerb_extension\')) OR "leisure" = \'parklet\' OR ("leisure" = \'outdoor_seating\' and "outdoor_seating" = \'parklet\') OR "area:highway" = \'prohibited\' OR "obstacle:parking" = \'yes\'', 'OUTPUT': 'memory:'})['OUTPUT']
-    #convert to lines and snap installations outlines to nearby parking lanes
+    #extract installations/obstacles of interest from polygon input and convert to lines
+    layer_obstacles_areas = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_polygons, 'EXPRESSION' : '("amenity" = \'bicycle_parking\' AND ("bicycle_parking:position" = \'lane\' OR "bicycle_parking:position" = \'street_side\' OR "bicycle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'motorcycle_parking\' AND ("parking" = \'lane\' OR "parking" = \'street_side\' OR "parking" = \'kerb_extension\')) OR ("amenity" = \'small_electric_vehicle_parking\' AND ("small_electric_vehicle_parking:position" = \'lane\' OR "small_electric_vehicle_parking:position" = \'street_side\' OR "small_electric_vehicle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'bicycle_rental\' AND ("bicycle_rental:position" = \'lane\' OR "bicycle_rental:position" = \'street_side\' OR "bicycle_rental:position" = \'kerb_extension\')) OR "leisure" = \'parklet\' OR ("leisure" = \'outdoor_seating\' and "outdoor_seating" = \'parklet\') OR "traffic_calming" = \'kerb_extension\' OR "obstacle:parking" = \'yes\'', 'OUTPUT': 'memory:'})['OUTPUT']
     layer_obstacles_areas = processing.run('native:polygonstolines', { 'INPUT' : layer_obstacles_areas, 'OUTPUT': 'memory:'})['OUTPUT']
+    #separately process restriction area markings (small snapping radius to not snap markings from the middle of the road)
+    layer_prohibited_areas = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_polygons, 'EXPRESSION' : '"area:highway" = \'prohibited\'', 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_prohibited_areas = processing.run('native:polygonstolines', { 'INPUT' : layer_prohibited_areas, 'OUTPUT': 'memory:'})['OUTPUT']
     #load line data and extract installations/obstacles of interest
-    layer_obstacles_lines = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_lines, 'EXPRESSION' : '("amenity" = \'bicycle_parking\' AND ("bicycle_parking:position" = \'lane\' OR "bicycle_parking:position" = \'street_side\' OR "bicycle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'motorcycle_parking\' AND ("parking" = \'lane\' OR "parking" = \'street_side\' OR "parking" = \'kerb_extension\')) OR ("amenity" = \'small_electric_vehicle_parking\' AND ("small_electric_vehicle_parking:position" = \'lane\' OR "small_electric_vehicle_parking:position" = \'street_side\' OR "small_electric_vehicle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'bicycle_rental\' AND ("bicycle_rental:position" = \'lane\' OR "bicycle_rental:position" = \'street_side\' OR "bicycle_rental:position" = \'kerb_extension\')) OR "leisure" = \'parklet\' OR ("leisure" = \'outdoor_seating\' and "outdoor_seating" = \'parklet\') OR "area:highway" = \'prohibited\' OR "obstacle:parking" = \'yes\'', 'OUTPUT': 'memory:'})['OUTPUT']
-    #snap features to parking/virtual kerb line
-    layer_obstacles_areas = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_obstacles_areas, 'REFERENCE_LAYER' : layer_virtual_kerb, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
-    layer_obstacles_lines = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_obstacles_lines, 'REFERENCE_LAYER' : layer_virtual_kerb, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_obstacles_lines = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_lines, 'EXPRESSION' : '("amenity" = \'bicycle_parking\' AND ("bicycle_parking:position" = \'lane\' OR "bicycle_parking:position" = \'street_side\' OR "bicycle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'motorcycle_parking\' AND ("parking" = \'lane\' OR "parking" = \'street_side\' OR "parking" = \'kerb_extension\')) OR ("amenity" = \'small_electric_vehicle_parking\' AND ("small_electric_vehicle_parking:position" = \'lane\' OR "small_electric_vehicle_parking:position" = \'street_side\' OR "small_electric_vehicle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'bicycle_rental\' AND ("bicycle_rental:position" = \'lane\' OR "bicycle_rental:position" = \'street_side\' OR "bicycle_rental:position" = \'kerb_extension\')) OR "leisure" = \'parklet\' OR ("leisure" = \'outdoor_seating\' and "outdoor_seating" = \'parklet\') OR "traffic_calming" = \'kerb_extension\' OR "obstacle:parking" = \'yes\'', 'OUTPUT': 'memory:'})['OUTPUT']
+    #snap features to nearby parking segments or virtual kerb lines
+    layer_obstacles_areas = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_obstacles_areas, 'REFERENCE_LAYER' : layer_snap, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_obstacles_lines = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_obstacles_lines, 'REFERENCE_LAYER' : layer_snap, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_prohibited_areas = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_prohibited_areas, 'REFERENCE_LAYER' : layer_snap, 'TOLERANCE' : 3, 'OUTPUT': 'memory:'})['OUTPUT']
     #buffer lines with rectangular shape
     layer_obstacles_areas = processing.run('native:buffer', {'INPUT' : layer_obstacles_areas, 'DISTANCE' : 2, 'END_CAP_STYLE' : 1, 'JOIN_STYLE' : 2, 'MITER_LIMIT' : 2, 'OUTPUT': 'memory:'})['OUTPUT']
     layer_obstacles_lines = processing.run('native:buffer', {'INPUT' : layer_obstacles_lines, 'DISTANCE' : 2, 'END_CAP_STYLE' : 1, 'JOIN_STYLE' : 2, 'MITER_LIMIT' : 2, 'OUTPUT': 'memory:'})['OUTPUT']
-
+    layer_prohibited_areas = processing.run('native:buffer', {'INPUT' : layer_prohibited_areas, 'DISTANCE' : 2, 'END_CAP_STYLE' : 1, 'JOIN_STYLE' : 2, 'MITER_LIMIT' : 2, 'OUTPUT': 'memory:'})['OUTPUT']
     #extract installations/obstacles of interest from point input
-    layer_obstacles_points = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_points, 'EXPRESSION' : '("amenity" = \'bicycle_parking\' AND ("bicycle_parking:position" = \'lane\' OR "bicycle_parking:position" = \'street_side\' OR "bicycle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'motorcycle_parking\' AND ("parking" = \'lane\' OR "parking" = \'street_side\' OR "parking" = \'kerb_extension\')) OR ("amenity" = \'small_electric_vehicle_parking\' AND ("small_electric_vehicle_parking:position" = \'lane\' OR "small_electric_vehicle_parking:position" = \'street_side\' OR "small_electric_vehicle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'bicycle_rental\' AND ("bicycle_rental:position" = \'lane\' OR "bicycle_rental:position" = \'street_side\' OR "bicycle_rental:position" = \'kerb_extension\')) OR "leisure" = \'parklet\' OR ("leisure" = \'outdoor_seating\' and "outdoor_seating" = \'parklet\') OR "area:highway" = \'prohibited\' OR "obstacle:parking" = \'yes\'', 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_obstacles_points = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_points, 'EXPRESSION' : '("amenity" = \'bicycle_parking\' AND ("bicycle_parking:position" = \'lane\' OR "bicycle_parking:position" = \'street_side\' OR "bicycle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'motorcycle_parking\' AND ("parking" = \'lane\' OR "parking" = \'street_side\' OR "parking" = \'kerb_extension\')) OR ("amenity" = \'small_electric_vehicle_parking\' AND ("small_electric_vehicle_parking:position" = \'lane\' OR "small_electric_vehicle_parking:position" = \'street_side\' OR "small_electric_vehicle_parking:position" = \'kerb_extension\')) OR ("amenity" = \'bicycle_rental\' AND ("bicycle_rental:position" = \'lane\' OR "bicycle_rental:position" = \'street_side\' OR "bicycle_rental:position" = \'kerb_extension\')) OR "leisure" = \'parklet\' OR ("leisure" = \'outdoor_seating\' and "outdoor_seating" = \'parklet\') OR "obstacle:parking" = \'yes\'', 'OUTPUT': 'memory:'})['OUTPUT']
     #derive a buffer size from the type of obstacle
     layer_obstacles_points.startEditing()
     layer_obstacles_points.dataProvider().addAttributes([QgsField('parking_buffer_size', QVariant.String)])
@@ -1246,6 +1289,8 @@ def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, l
             buffer = buffer_bicycle_parking
         if leisure == 'parklet' or leisure == 'outdoor_seating':
             buffer = buffer_parklet
+        if amenity == 'loading_ramp':
+            buffer = buffer_loading_ramp
         if amenity == 'bicycle_parking' or amenity == 'motorcycle_parking' or amenity == 'bicycle_rental':
             capacity = NULL
             if layer_obstacles_points.fields().indexOf('capacity') != -1:
@@ -1261,11 +1306,11 @@ def processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, l
     layer_obstacles_points.updateFields()
     layer_obstacles_points.commitChanges()
     #snap points to parking segments
-    layer_obstacles_points = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_obstacles_points, 'REFERENCE_LAYER' : layer_virtual_kerb, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_obstacles_points = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer_obstacles_points, 'REFERENCE_LAYER' : layer_snap, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
     #buffer / distance to parking vehicles is "size of object / 2 + 0.4" (size of object / 2: half diameter of the object; 0.4: safety / manoeuvring distance)
     layer_obstacles_points = processing.run('native:buffer', {'DISTANCE' : QgsProperty.fromExpression('("parking_buffer_size" / 2) + 0.4'), 'INPUT' : layer_obstacles_points, 'OUTPUT': 'memory:'})['OUTPUT']
     #merge area/line and point layers
-    layer_obstacles = processing.run('native:mergevectorlayers', {'LAYERS' : [layer_obstacles_areas,layer_obstacles_lines,layer_obstacles_points], 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_obstacles = processing.run('native:mergevectorlayers', {'LAYERS' : [layer_obstacles_areas,layer_prohibited_areas,layer_obstacles_lines,layer_obstacles_points], 'OUTPUT': 'memory:'})['OUTPUT']
     #cut parking lanes
     layer_parking = processing.run('native:difference', {'INPUT' : layer_parking, 'OVERLAY' : layer_obstacles, 'OUTPUT': 'memory:'})['OUTPUT']
     #add buffer to map
@@ -1748,9 +1793,13 @@ if layers:
     layer_no_parking_right = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_parking_right, 'EXPRESSION' : '"parking" IS \'no\' OR "parking" IS \'separate\' OR ("parking" IS NULL AND "orientation" IS NULL)', 'OUTPUT': 'memory:'})['OUTPUT']
     layer_parking_right = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_parking_right, 'EXPRESSION' : '"parking" IS NOT \'no\' AND "parking" IS NOT \'separate\' AND ("parking" IS NOT NULL OR "orientation" IS NOT NULL)', 'OUTPUT': 'memory:'})['OUTPUT']
 
-    #keep parking lanes free in the area of pedestrian crossings (before offset, because affects both sides)
+    #cut street parking segments in the area of pedestrian crossings (before offset, because affects both sides)
     layer_parking_left = bufferCrossing(layer_parking_left, layer_points, 'left')
     layer_parking_right = bufferCrossing(layer_parking_right, layer_points, 'right')
+
+    #cut street parking segments in the area of turning circles (before offset, because affects both sides)
+    layer_parking_left = bufferTurningCircles(layer_parking_left, layer_points, 'left')
+    layer_parking_right = bufferTurningCircles(layer_parking_right, layer_points, 'right')
 
     #offset street parking segments according to the lane width
     print(time.strftime('%H:%M:%S', time.localtime()), 'Offset street parking data...')
@@ -1776,17 +1825,18 @@ if layers:
         print(time.strftime('%H:%M:%S', time.localtime()), 'Include separate parking areas...')
         layer_parking_separate_areas = processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_kerb)
 
-    #cut street parking segments where separately areas and nodes are located
-    #TODO
-
     #keep street parking segments free in the area of bus stops
     if buffer_bus_stop:
         print(time.strftime('%H:%M:%S', time.localtime()), 'Processing bus stops...')
         layer_parking = bufferBusStop(layer_parking, layer_points, layer_virtual_kerb)
-    #cut segments at installations on the carriageway (bicycle parking, parkletts...)
+
+    #cut segments at installations and obstacles on the carriageway (bicycle parking, parkletts, street furniture tagged as parking obstacle...)
     if process_parking_obstacles:
         print(time.strftime('%H:%M:%S', time.localtime()), 'Processing parking obstacles...')
         layer_parking = processObstacles(layer_parking, layer_polygons, layer_points, layer_lines, layer_virtual_kerb)
+        #do the same for separately mapped parking areas, but snap to the actual parking segment
+        if process_separate_parking:
+            layer_parking_separate_areas = processObstacles(layer_parking_separate_areas, layer_polygons, layer_points, layer_lines, layer_parking_separate_areas)
 
     #TODO include lowered kerbs (kerb=lowered)
     #TODO cut BSR ramps
