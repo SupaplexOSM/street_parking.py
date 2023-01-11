@@ -13,6 +13,9 @@
 
 Check the resulting street parking data for accuracy and bugs, depending on how precise you need them. Street side and kerb parking as well as street segments with diagonal or perpendicular parking have the highest potential for accuracy failures, depending on how accurately the OSM data is mapped.
 
+With very precisely mapped street parking information, this script can provide very accurate data - but this requires intensive micromapping. An example of the use of the data is the [Neukölln Parking Map](https://parkraum.osm-verkehrswende.org/project-prototype-neukoelln/?map=parkingmap
+) (for this rendering, the resulting parking data were aligned to the kerbs and manually post-processed and styled).
+
 ## Results
 
 The script generates georeferenced line features representing street parking lanes. The lines are rendered in QGIS with a basic styling and can afterwards be further edited or spatially analysed as required. To understand, how the results are interpolated, some "cutting" areas and features are also rendered.
