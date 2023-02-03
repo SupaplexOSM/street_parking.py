@@ -1,3 +1,5 @@
+2023-01-30 ! Separately mapped parking areas that are cutted to multiparts are converted to single parts
+2023-01-30 + Parking access restrictions consider road access attributes if no specific parking access is given
 2023-01-11 + Include (buffers) at turning circles and turning loops
 2023-01-11 + Added markings:type for type of parking space markings
 2023-01-11 ! Fixed reading error for surface and markings attributes if specified for both sides
