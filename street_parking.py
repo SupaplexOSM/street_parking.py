@@ -6,7 +6,7 @@
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2023-01-11                                                 #
+#   > version/date: 2023-01-31                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -56,7 +56,11 @@ car_dist_perp = 2.5     #perpendicular parking
 car_length = 4.4        #average motor car length (a single car, without manoeuvring distance)
 car_width = 1.8         #average motor car width
 
-bus_length = 12         #average bus length – currently not in use
+bus_dist_para = 12      #parallel parking
+bus_dist_diag = 5       #diagonal parking
+bus_dist_perp = 4       #perpendicular parking
+bus_length = 12         #average bus length
+bus_width = 2.5         #average bus width
 hgv_articulated_length = 16 #average length of semi-trailer trucks – currently not in use
 
 area_parking_place = 12 #square meters per parking space on separately mapped parking areas - for calculating capacities of parking areas without capacity and orientation attributes
@@ -87,6 +91,7 @@ street_key_list = [
 'id',
 'highway',
 'name',
+#'access',
 'oneway',
 'width_proc',
 'width_proc:effective',
@@ -112,6 +117,9 @@ parking_processing_key_list = [
 'id',
 'highway',
 'name',
+'access',
+'vehicle',
+'motor_vehicle',
 'surface',
 'oneway',
 'width_proc',
@@ -126,6 +134,7 @@ parking_attribute_list = [
 'side',
 'highway',
 'highway:name',
+#'highway:access',
 'highway:oneway',
 'parking',
 'orientation',
@@ -603,7 +612,7 @@ def prepareParkingLane(layer, side, clean):
         if condition_class == '':
             condition_class = NULL
         if layer.fields().indexOf('parking:' + side + ':zone') != -1:
-            zone = feature.attribute('parking:' + side + ':zone')
+            zone = getSideAttribute(layer, feature, side, 'zone', 0)
 
         #ermittelte Parkstreifeninformationen in die Attributtabelle des Straßenabschnitts übertragen
         layer.changeAttributeValue(feature.id(), id_side, side)
@@ -656,7 +665,7 @@ def getConditionClass(layer, feature, side):
 #-------------------------------------------------------------------------------
 # > returns:
 #   [1] A condition class string with one or more of the following condition classes:
-#       free | mixed | residents | paid | loading | charging | disabled | disabled_private | taxi | car_sharing | time_limited | access_restriction | no_parking
+#       free | mixed | residents | paid | time_limited | loading | charging | disabled | disabled_private | taxi | car_sharing | vehicle_restriction | access_restriction | no_parking | no_standing | no_stopping
 #   [2] A string containing designated vehicle classes (e.g. motorcar or bus only)
 #   [3] A string containing excluded vehicle classes (e.g. no hgv)
 #-------------------------------------------------------------------------------
@@ -664,6 +673,17 @@ def getConditionClass(layer, feature, side):
     fee = getSideAttribute(layer, feature, side, 'fee', 1)
     fee_conditional = getSideAttribute(layer, feature, side, 'fee:conditional', 1)
     access = getSideAttribute(layer, feature, side, 'access', 1)
+    #if no specific access is given for the parking lane, check whether there is an access restriction for the entire street
+    if not access:
+        highway_access = NULL
+        if layer.fields().indexOf('highway:motor_vehicle') != -1:
+            highway_access = feature.attribute('highway:motor_vehicle')
+        if not highway_access and layer.fields().indexOf('highway:vehicle') != -1:
+            highway_access = feature.attribute('highway:vehicle')
+        if not highway_access and layer.fields().indexOf('highway:access') != -1:
+            highway_access = feature.attribute('highway:access')
+        if highway_access:
+            access = highway_access
     access_conditional = getSideAttribute(layer, feature, side, 'access:conditional', 1)
     maxstay = getSideAttribute(layer, feature, side, 'maxstay', 1)
     maxstay_conditional = getSideAttribute(layer, feature, side, 'maxstay:conditional', 1)
@@ -672,10 +692,13 @@ def getConditionClass(layer, feature, side):
 
     zone = getSideAttribute(layer, feature, side, 'zone', 1)
 
+    vehicle_class_list=['motorcar', 'disabled', 'bus', 'taxi', 'psv', 'hgv', 'goods', 'car_sharing', 'emergency', 'motorhome']
+    access_restriction_class_list=['disabled', 'taxi', 'psv', 'car_sharing', 'emergency']
+
     #vehicle restrictions
     vehicle_designated = vehicle_excluded = NULL
     vehicle_none_restriction = []
-    for vehicle_class in ['motorcar', 'disabled', 'bus', 'taxi', 'psv', 'hgv', 'goods', 'car_sharing', 'emergency', 'motorhome']:
+    for vehicle_class in vehicle_class_list:
         vehicle = getSideAttribute(layer, feature, side, vehicle_class, 1)
         vehicle_conditional = getSideAttribute(layer, feature, side, vehicle_class + ':conditional', 1)
         restriction_vehicle = getSideAttribute(layer, feature, side, 'restriction:' + vehicle_class, 1)
@@ -709,6 +732,7 @@ def getConditionClass(layer, feature, side):
 
     #mixed parking: fee and residential zone
     fee_cond = getSubCondition(fee_conditional, 'yes', 1)
+    no_fee_cond = getSubCondition(fee_conditional, 'no', 1)
     if (fee == 'yes' or fee_cond) and zone != '' and zone != 'no' and zone != 'none':
         condition_class = addConditionClass(condition_class, 'mixed', fee_cond)
 
@@ -721,10 +745,9 @@ def getConditionClass(layer, feature, side):
     if (fee == 'yes' or fee_cond) and (access == 'yes' or access == '') and (zone == '' or zone == 'no' or zone == 'none'):
         condition_class = addConditionClass(condition_class, 'paid', fee_cond)
 
-    #free parking: no fee, no maxstay, no access restrictions, no action based restriction (charging or loading), no residential zone
-    no_fee_cond = getSubCondition(fee_conditional, 'no', 1)
-    if (fee == 'no' or no_fee_cond) and (maxstay == '' or maxstay == 'no' or maxstay == 'none') and maxstay_conditional == '' and (access == 'yes' or access == '') and (zone == '' or zone == 'no' or zone == 'none') and not 'only' in restriction:
-        if not 'mixed' in condition_class and not 'residents' in condition_class and not 'paid' in condition_class:
+    #free parking (unmanaged parking: no fee or maxstay, no residential zone)
+    if (fee == '' or fee == 'no' or no_fee_cond) and maxstay in ['', 'no', 'none'] and (access in ['', 'yes', 'destination', 'designated', 'permissive'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_designated) or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)) and zone in ['', 'no', 'none'] and (restriction in ['', 'no', 'none'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)):
+        if condition_class != 'mixed' and condition_class != 'residents' and condition_class != 'paid':
             condition_class = addConditionClass(condition_class, 'free', '')
 
     #loading zone
@@ -738,38 +761,68 @@ def getConditionClass(layer, feature, side):
         condition_class = addConditionClass(condition_class, 'charging', charging_cond)
 
     #private disabled parking
-    access_disabled_conditional = getSideAttribute(layer, feature, side, 'access:disabled:conditional', 1)
-    private_disabled_conditional = getSubCondition(access_disabled_conditional, 'private', 1)
+    disabled_conditional = getSideAttribute(layer, feature, side, 'disabled:conditional', 1)
+    private_disabled_conditional = getSubCondition(disabled_conditional, 'private', 1)
     if (access == 'no' and getSideAttribute(layer, feature, side, 'disabled', 1) == 'private') or ('no' in access_conditional and private_disabled_conditional):
         condition_class = addConditionClass(condition_class, 'disabled_private', private_disabled_conditional)
 
-    #public disabled, taxi or car sharing: use designated vehicles
-    if vehicle_designated and (access == 'no' or 'no' in access_conditional):
-        for vehicle in ['disabled', 'taxi', 'car_sharing']:
-            vehicle_cond = getSubCondition(vehicle_designated, vehicle, 1)
-            if vehicle in vehicle_designated:
-                condition_class = addConditionClass(condition_class, vehicle, vehicle_cond)
-
     #time limited parking: maxstay
-    if (maxstay != '' and (maxstay != 'no' and maxstay != 'none')):
-        condition_class = addConditionClass(condition_class, 'time_limited', '')
     if maxstay_conditional != '':
         maxstay_interval = getSubCondition(maxstay_conditional, '', 1)
         condition_class = addConditionClass(condition_class, 'time_limited', maxstay_interval)
+    else:
+        if (maxstay != '' and maxstay != 'no' and maxstay != 'none'):
+            condition_class = addConditionClass(condition_class, 'time_limited', '')
+
+    #vehicle_restriction and
+    #public disabled, taxi or car sharing: use designated vehicles
+    if vehicle_designated and (access == 'no' or 'no' in access_conditional or vehicle_none_restriction):
+        vehicle_cond = getSubCondition(vehicle_designated, vehicle, 1)
+        #disabled, taxi and car_sharing have their own class
+        for vehicle in ['disabled', 'taxi', 'car_sharing']:
+            if vehicle in vehicle_designated:
+                condition_class = addConditionClass(condition_class, vehicle, vehicle_cond)
+        #"vehicle_restriction" is just for some "public" vehicle categories like motorcar, bus or goods
+        if not listItemIn(access_restriction_class_list, vehicle_designated):
+            condition_class = addConditionClass(condition_class, 'vehicle_restriction', vehicle_cond)
 
     #access restriction
+    #only for access restricted(e.g. private/customer), but not residential parking or parking for special vehicles like emergency vehicles
     access_cond = getSubCondition(access_conditional, '', 1)
-    if (((access != 'yes' and access != '') or access_cond) or vehicle_none_restriction) and not 'disabled' in condition_class and not 'taxi' in condition_class and not 'car_sharing' in condition_class and not 'residents' in condition_class:
+    if ((access not in ['', 'yes', 'destination', 'designated', 'permissive'] or access_cond) and not listItemIn(['disabled', 'taxi', 'car_sharing', 'disabled_private', 'residents', 'vehicle_restriction', 'loading', 'charging'], condition_class)):
         condition_class = addConditionClass(condition_class, 'access_restriction', access_cond)
 
     #temporary no parking
-    no_parking_cond = getSubCondition(restriction_conditional, ['no_parking', 'no_standing', 'no_stopping'], 1)
-    if ('no_' in restriction or no_parking_cond) and len(vehicle_none_restriction) < 1:
+    no_parking_cond = getSubCondition(restriction_conditional, 'no_parking', 1)
+    if ('no_parking' in restriction or no_parking_cond) and len(vehicle_none_restriction) < 1:
         condition_class = addConditionClass(condition_class, 'no_parking', no_parking_cond)
 
-    #TODO other restrictions
+    #temporary no standing
+    no_standing_cond = getSubCondition(restriction_conditional, 'no_standing', 1)
+    if ('no_standing' in restriction or no_standing_cond) and len(vehicle_none_restriction) < 1:
+        condition_class = addConditionClass(condition_class, 'no_standing', no_standing_cond)
+
+    #temporary no stopping
+    no_stopping_cond = getSubCondition(restriction_conditional, 'no_stopping', 1)
+    if ('no_stopping' in restriction or no_stopping_cond) and len(vehicle_none_restriction) < 1:
+        condition_class = addConditionClass(condition_class, 'no_stopping', no_stopping_cond)
+
+    #TODO other restrictions (e.g. height or weight restrictions)
 
     return(condition_class, vehicle_designated, vehicle_excluded)
+
+
+
+def listItemIn(list, checkstring):
+#-------------------------------------------------------------------------------
+# Checks whether on of the strings given in a list is part of a given string
+#-------------------------------------------------------------------------------
+    if not list or not checkstring:
+        return(False)
+    for item in list:
+        if item in checkstring:
+            return(True)
+    return(False)
 
 
 
@@ -1341,7 +1394,7 @@ def processSeparateParkingNodes(layer_points, layer_virtual_kerb):
             parking_attributes.remove(attr)
     
     layer = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_points, 'EXPRESSION' : '"amenity" IS \'parking\'', 'OUTPUT': 'memory:'})['OUTPUT']
-    layer = harmonizeSeparateParkingAttributes(layer, 'separate_nodes', {})
+    layer = harmonizeSeparateParkingAttributes(layer, 'separate_node', {})
 
     #snap to virtual kerb
     layer = processing.run('native:snapgeometries', { 'BEHAVIOR' : 1, 'INPUT' : layer, 'REFERENCE_LAYER' : layer_virtual_kerb, 'TOLERANCE' : 8, 'OUTPUT': 'memory:'})['OUTPUT']
@@ -1664,10 +1717,12 @@ def getCapacity(layer):
     layer.startEditing()
     id_capacity = layer.fields().indexOf('capacity')
     car_diag_width = math.sqrt(car_width * 0.5 * car_width) + math.sqrt(car_length * 0.5 * car_length)
+    bus_diag_width = math.sqrt(bus_width * 0.5 * bus_width) + math.sqrt(bus_length * 0.5 * bus_length)
 #Korrektur/Verbesserung: Bei Einstellwinkel 60 gon = 54 Grad: car_length * sin (36 Grad) + car_width * cos(36 Grad) = 4.04 Meter
     for feature in layer.getFeatures():
         orientation = feature.attribute('orientation')
         capacity = feature.attribute('capacity')
+        vehicle = feature.attribute('vehicle_designated')
         geom = feature.geometry()
         length = geom.length()
 
@@ -1675,28 +1730,44 @@ def getCapacity(layer):
         if capacity != NULL:
             has_capacity = True
 
+        #capacity of bus parking is calculated with a bigger size
+        if vehicle == 'bus':
+            vehicle_dist_para = bus_dist_para
+            vehicle_dist_diag = bus_dist_diag
+            vehicle_dist_perp = bus_dist_perp
+            vehicle_length = bus_length
+            vehicle_width = bus_width
+            vehicle_diag_width = bus_diag_width
+        else:
+            vehicle_dist_para = car_dist_para
+            vehicle_dist_diag = car_dist_diag
+            vehicle_dist_perp = car_dist_perp
+            vehicle_length = car_length
+            vehicle_width = car_width
+            vehicle_diag_width = car_diag_width
+
         if orientation == 'parallel':
             #Wenn Segment zu kurz für ein Fahrzeug: löschen
-            if length < car_length:
+            if length < vehicle_length:
                 layer.deleteFeature(feature.id())
                 continue
             elif capacity == NULL:
                 #Anzahl Parkplätze ergibt sich aus Segmentlänge - abzüglich eines Ragierabstands zwischen zwei Fahrzeugen, der an einem der beiden Enden des Segments nicht benötigt wird
-                capacity = math.floor((length + (car_dist_para - car_length)) / car_dist_para)
+                capacity = math.floor((length + (vehicle_dist_para - vehicle_length)) / vehicle_dist_para)
                 layer.changeAttributeValue(feature.id(), id_capacity, capacity)
         elif orientation == 'diagonal':
-            if length < car_width:
+            if length < vehicle_width:
                 layer.deleteFeature(feature.id())
                 continue
             elif capacity == NULL:
-                capacity = math.floor((length + (car_dist_diag - car_diag_width)) / car_dist_diag)
+                capacity = math.floor((length + (vehicle_dist_diag - vehicle_diag_width)) / vehicle_dist_diag)
                 layer.changeAttributeValue(feature.id(), id_capacity, capacity)
         elif orientation == 'perpendicular':
-            if length < car_width:
+            if length < vehicle_width:
                 layer.deleteFeature(feature.id())
                 continue
             elif capacity == NULL:
-                capacity = math.floor((length + (car_dist_perp - car_width)) / car_dist_perp)
+                capacity = math.floor((length + (vehicle_dist_perp - vehicle_width)) / vehicle_dist_perp)
                 layer.changeAttributeValue(feature.id(), id_capacity, capacity)
 
         if capacity == NULL:
@@ -1903,12 +1974,12 @@ if layers:
         #if missing in attributes if separate parking features: get side, highway, highway name and oneway from nearest virtual kerb line
         layer_parking_separate = pickMissingHighwayAttributes(layer_parking_separate, layer_virtual_kerb)
 
-    #convert multi-part parking lanes into single-part objects
-    layer_parking = processing.run('native:multiparttosingleparts', {'INPUT' : layer_parking, 'OUTPUT': 'memory:'})['OUTPUT']
-
     #merge with street parking lines from separately mapped street parking features
     if process_separate_parking:
         layer_parking = processing.run('native:mergevectorlayers', {'LAYERS' : [layer_parking, layer_parking_separate], 'OUTPUT': 'memory:'})['OUTPUT']
+
+    #convert multi-part parking lanes into single-part objects
+    layer_parking = processing.run('native:multiparttosingleparts', {'INPUT' : layer_parking, 'OUTPUT': 'memory:'})['OUTPUT']
 
     #delete street parking segments/line artefacts if they are too short for parking...
     #...and add capacity information to line segments or correct cutting errors
@@ -1934,6 +2005,8 @@ if layers:
     #convert street parking segments into chains of points for each individual vehicle
     if create_point_chain:
         print(time.strftime('%H:%M:%S', time.localtime()), 'Convert lanes to points...')
+        #TODO use calculation from Straßenraumkarte Neukölln Script that is very precise
+        #TODO capacity of bus parking spaces isn't calculated correctly
         #Method A: simple calculation for nodes on kerb line
         #layer_parking_chain = processing.run('native:pointsalonglines', {'INPUT' : layer_parking, 'DISTANCE' : QgsProperty.fromExpression('if("orientation" = \'parallel\' OR "orientation" = \'diagonal\' OR "orientation" = \'perpendicular\', $length / "capacity", 0)'), 'START_OFFSET' : QgsProperty.fromExpression('if(\"orientation\" = \'parallel\', 2.6 - 0.4, if(\"orientation\" = \'diagonal\', 1.27, if(\"orientation\" = \'perpendicular\', 1.25 - 0.4, 0)))'), 'END_OFFSET' : QgsProperty.fromExpression('if(\"orientation\" = \'parallel\', 2.6 - 0.4, if(\"orientation\" = \'diagonal\', 3.11, if(\"orientation\" = \'perpendicular\', 1.25 - 0.4, 0)))'), 'OUTPUT' : dir_output + 'parking_points.geojson' })
 
