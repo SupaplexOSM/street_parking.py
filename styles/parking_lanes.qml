@@ -1,290 +1,290 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.16.3-Hannover" minScale="100000000" labelsEnabled="0" maxScale="0" simplifyDrawingHints="1" readOnly="0" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyAlgorithm="0" simplifyDrawingTol="1" simplifyLocal="1">
+<qgis simplifyAlgorithm="0" simplifyDrawingTol="1" styleCategories="AllStyleCategories" maxScale="0" simplifyLocal="1" labelsEnabled="0" simplifyMaxScale="1" readOnly="0" simplifyDrawingHints="1" version="3.16.3-Hannover" hasScaleBasedVisibilityFlag="0" minScale="100000000">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
   </flags>
-  <temporal endExpression="" durationField="" enabled="0" fixedDuration="0" accumulate="0" startExpression="" startField="" endField="" durationUnit="min" mode="0">
+  <temporal durationField="" enabled="0" startExpression="" endField="" durationUnit="min" fixedDuration="0" mode="0" startField="" endExpression="" accumulate="0">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <renderer-v2 forceraster="0" symbollevels="0" type="RuleRenderer" enableorderby="0">
+  <renderer-v2 symbollevels="0" enableorderby="0" type="RuleRenderer" forceraster="0">
     <rules key="{f239a9bc-0df2-429a-b75b-d4c5a8b54fb2}">
-      <rule label="parallel" key="{b1467406-b271-4092-9e3d-f2ab7e482a1a}" symbol="0" filter="&quot;orientation&quot; = 'parallel'"/>
-      <rule label="diagonal" key="{5c76d1fb-af22-40b3-9d42-5aef9ff15e29}" symbol="1" filter="&quot;orientation&quot; = 'diagonal'"/>
-      <rule label="perpendicular" key="{a2b2a5ef-6aa8-4008-80d0-9a31b875a146}" symbol="2" filter="&quot;orientation&quot; = 'perpendicular'"/>
-      <rule label="unknown" key="{06f609bf-725a-4978-8e06-fd75433f3e98}" symbol="3" filter="&quot;orientation&quot; IS NULL OR (&quot;orientation&quot; != 'parallel' AND &quot;orientation&quot; != 'diagonal' AND &quot;orientation&quot; != 'perpendicular')"/>
+      <rule symbol="0" filter="&quot;orientation&quot; = 'parallel'" key="{b1467406-b271-4092-9e3d-f2ab7e482a1a}" label="parallel"/>
+      <rule symbol="1" filter="&quot;orientation&quot; = 'diagonal'" key="{5c76d1fb-af22-40b3-9d42-5aef9ff15e29}" label="diagonal"/>
+      <rule symbol="2" filter="&quot;orientation&quot; = 'perpendicular'" key="{a2b2a5ef-6aa8-4008-80d0-9a31b875a146}" label="perpendicular"/>
+      <rule symbol="3" filter="&quot;orientation&quot; IS NULL OR (&quot;orientation&quot; != 'parallel' AND &quot;orientation&quot; != 'diagonal' AND &quot;orientation&quot; != 'perpendicular')" key="{06f609bf-725a-4978-8e06-fd75433f3e98}" label="unknown"/>
     </rules>
     <symbols>
-      <symbol force_rhr="0" clip_to_extent="1" type="line" name="0" alpha="1">
-        <layer enabled="1" locked="0" class="HashLine" pass="0">
-          <prop v="4" k="average_angle_length"/>
-          <prop v="3x:0,0,0,0,0,0" k="average_angle_map_unit_scale"/>
-          <prop v="MM" k="average_angle_unit"/>
-          <prop v="90" k="hash_angle"/>
-          <prop v="4.4" k="hash_length"/>
-          <prop v="3x:0,0,0,0,0,0" k="hash_length_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="hash_length_unit"/>
-          <prop v="5.2" k="interval"/>
-          <prop v="3x:0,0,0,0,0,0" k="interval_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="interval_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="2.2" k="offset_along_line"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_along_line_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_along_line_unit"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-          <prop v="interval" k="placement"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="1" k="rotate"/>
+      <symbol name="0" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+        <layer locked="0" enabled="1" pass="0" class="HashLine">
+          <prop k="average_angle_length" v="4"/>
+          <prop k="average_angle_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="average_angle_unit" v="MM"/>
+          <prop k="hash_angle" v="90"/>
+          <prop k="hash_length" v="4.4"/>
+          <prop k="hash_length_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="hash_length_unit" v="RenderMetersInMapUnits"/>
+          <prop k="interval" v="5.2"/>
+          <prop k="interval_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="interval_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_along_line" v="2.2"/>
+          <prop k="offset_along_line_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_along_line_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+          <prop k="placement" v="interval"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="rotate" v="1"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" value="" name="name"/>
-              <Option type="Map" name="properties">
-                <Option type="Map" name="offset">
-                  <Option type="bool" value="true" name="active"/>
-                  <Option type="QString" value="if(&quot;parking_source&quot;='separate_area' OR &quot;parking_source&quot;='separate_node',-1.1,if(&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder',1.1,if(&quot;parking&quot;='half_on_kerb',0,-1.1)))" name="expression"/>
-                  <Option type="int" value="3" name="type"/>
+              <Option name="name" type="QString" value=""/>
+              <Option name="properties" type="Map">
+                <Option name="offset" type="Map">
+                  <Option name="active" type="bool" value="true"/>
+                  <Option name="expression" type="QString" value="if((&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder') AND NOT &quot;parking_source&quot;='separate_area',1.1,if(&quot;parking&quot;='half_on_kerb',0,-1.1))"/>
+                  <Option name="type" type="int" value="3"/>
                 </Option>
               </Option>
-              <Option type="QString" value="collection" name="type"/>
+              <Option name="type" type="QString" value="collection"/>
             </Option>
           </data_defined_properties>
-          <symbol force_rhr="0" clip_to_extent="1" type="line" name="@0@0" alpha="1">
-            <layer enabled="1" locked="0" class="SimpleLine" pass="0">
-              <prop v="0" k="align_dash_pattern"/>
-              <prop v="flat" k="capstyle"/>
-              <prop v="5;2" k="customdash"/>
-              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-              <prop v="RenderMetersInMapUnits" k="customdash_unit"/>
-              <prop v="0" k="dash_pattern_offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
-              <prop v="MM" k="dash_pattern_offset_unit"/>
-              <prop v="0" k="draw_inside_polygon"/>
-              <prop v="bevel" k="joinstyle"/>
-              <prop v="31,12,173,255" k="line_color"/>
-              <prop v="solid" k="line_style"/>
-              <prop v="1.8" k="line_width"/>
-              <prop v="RenderMetersInMapUnits" k="line_width_unit"/>
-              <prop v="0" k="offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-              <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-              <prop v="0" k="ring_filter"/>
-              <prop v="0" k="tweak_dash_pattern_on_corners"/>
-              <prop v="0" k="use_custom_dash"/>
-              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <symbol name="@0@0" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+            <layer locked="0" enabled="1" pass="0" class="SimpleLine">
+              <prop k="align_dash_pattern" v="0"/>
+              <prop k="capstyle" v="flat"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="RenderMetersInMapUnits"/>
+              <prop k="dash_pattern_offset" v="0"/>
+              <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="dash_pattern_offset_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="31,12,173,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="1.8"/>
+              <prop k="line_width_unit" v="RenderMetersInMapUnits"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="tweak_dash_pattern_on_corners" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
-                  <Option type="Map" name="properties">
-                    <Option type="Map" name="outlineColor">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                  <Option name="name" type="QString" value=""/>
+                  <Option name="properties" type="Map">
+                    <Option name="outlineColor" type="Map">
+                      <Option name="active" type="bool" value="true"/>
+                      <Option name="expression" type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))"/>
+                      <Option name="type" type="int" value="3"/>
                     </Option>
                   </Option>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option name="type" type="QString" value="collection"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
       </symbol>
-      <symbol force_rhr="0" clip_to_extent="1" type="line" name="1" alpha="1">
-        <layer enabled="1" locked="0" class="HashLine" pass="0">
-          <prop v="4" k="average_angle_length"/>
-          <prop v="3x:0,0,0,0,0,0" k="average_angle_map_unit_scale"/>
-          <prop v="MM" k="average_angle_unit"/>
-          <prop v="144" k="hash_angle"/>
-          <prop v="4.4" k="hash_length"/>
-          <prop v="3x:0,0,0,0,0,0" k="hash_length_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="hash_length_unit"/>
-          <prop v="3.1" k="interval"/>
-          <prop v="3x:0,0,0,0,0,0" k="interval_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="interval_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3.1" k="offset_along_line"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_along_line_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_along_line_unit"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-          <prop v="interval" k="placement"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="1" k="rotate"/>
+      <symbol name="1" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+        <layer locked="0" enabled="1" pass="0" class="HashLine">
+          <prop k="average_angle_length" v="4"/>
+          <prop k="average_angle_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="average_angle_unit" v="MM"/>
+          <prop k="hash_angle" v="144"/>
+          <prop k="hash_length" v="4.4"/>
+          <prop k="hash_length_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="hash_length_unit" v="RenderMetersInMapUnits"/>
+          <prop k="interval" v="3.1"/>
+          <prop k="interval_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="interval_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_along_line" v="3.1"/>
+          <prop k="offset_along_line_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_along_line_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+          <prop k="placement" v="interval"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="rotate" v="1"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" value="" name="name"/>
-              <Option type="Map" name="properties">
-                <Option type="Map" name="lineAngle">
-                  <Option type="bool" value="true" name="active"/>
-                  <Option type="QString" value="if(&quot;highway:oneway&quot;='yes' AND &quot;side&quot;='left',36,144)" name="expression"/>
-                  <Option type="int" value="3" name="type"/>
+              <Option name="name" type="QString" value=""/>
+              <Option name="properties" type="Map">
+                <Option name="lineAngle" type="Map">
+                  <Option name="active" type="bool" value="true"/>
+                  <Option name="expression" type="QString" value="if(&quot;highway:oneway&quot;='yes' AND &quot;side&quot;='left',36,144)"/>
+                  <Option name="type" type="int" value="3"/>
                 </Option>
-                <Option type="Map" name="offset">
-                  <Option type="bool" value="true" name="active"/>
-                  <Option type="QString" value="if(&quot;parking_source&quot;='separate_area' OR &quot;parking_source&quot;='separate_node',-2.2,if(&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder',2.2,if(&quot;parking&quot;='half_on_kerb',0,-2.2)))" name="expression"/>
-                  <Option type="int" value="3" name="type"/>
+                <Option name="offset" type="Map">
+                  <Option name="active" type="bool" value="true"/>
+                  <Option name="expression" type="QString" value="if((&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder') AND NOT &quot;parking_source&quot;='separate_area',2.2,if(&quot;parking&quot;='half_on_kerb',0,-2.2))"/>
+                  <Option name="type" type="int" value="3"/>
                 </Option>
               </Option>
-              <Option type="QString" value="collection" name="type"/>
+              <Option name="type" type="QString" value="collection"/>
             </Option>
           </data_defined_properties>
-          <symbol force_rhr="0" clip_to_extent="1" type="line" name="@1@0" alpha="1">
-            <layer enabled="1" locked="0" class="SimpleLine" pass="0">
-              <prop v="0" k="align_dash_pattern"/>
-              <prop v="flat" k="capstyle"/>
-              <prop v="5;2" k="customdash"/>
-              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-              <prop v="RenderMetersInMapUnits" k="customdash_unit"/>
-              <prop v="0" k="dash_pattern_offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
-              <prop v="MM" k="dash_pattern_offset_unit"/>
-              <prop v="0" k="draw_inside_polygon"/>
-              <prop v="bevel" k="joinstyle"/>
-              <prop v="31,12,173,255" k="line_color"/>
-              <prop v="solid" k="line_style"/>
-              <prop v="1.8" k="line_width"/>
-              <prop v="RenderMetersInMapUnits" k="line_width_unit"/>
-              <prop v="0" k="offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-              <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-              <prop v="0" k="ring_filter"/>
-              <prop v="0" k="tweak_dash_pattern_on_corners"/>
-              <prop v="0" k="use_custom_dash"/>
-              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <symbol name="@1@0" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+            <layer locked="0" enabled="1" pass="0" class="SimpleLine">
+              <prop k="align_dash_pattern" v="0"/>
+              <prop k="capstyle" v="flat"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="RenderMetersInMapUnits"/>
+              <prop k="dash_pattern_offset" v="0"/>
+              <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="dash_pattern_offset_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="31,12,173,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="1.8"/>
+              <prop k="line_width_unit" v="RenderMetersInMapUnits"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="tweak_dash_pattern_on_corners" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
-                  <Option type="Map" name="properties">
-                    <Option type="Map" name="outlineColor">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                  <Option name="name" type="QString" value=""/>
+                  <Option name="properties" type="Map">
+                    <Option name="outlineColor" type="Map">
+                      <Option name="active" type="bool" value="true"/>
+                      <Option name="expression" type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))"/>
+                      <Option name="type" type="int" value="3"/>
                     </Option>
                   </Option>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option name="type" type="QString" value="collection"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
       </symbol>
-      <symbol force_rhr="0" clip_to_extent="1" type="line" name="2" alpha="1">
-        <layer enabled="1" locked="0" class="HashLine" pass="0">
-          <prop v="4" k="average_angle_length"/>
-          <prop v="3x:0,0,0,0,0,0" k="average_angle_map_unit_scale"/>
-          <prop v="MM" k="average_angle_unit"/>
-          <prop v="0" k="hash_angle"/>
-          <prop v="4.4" k="hash_length"/>
-          <prop v="3x:0,0,0,0,0,0" k="hash_length_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="hash_length_unit"/>
-          <prop v="2.5" k="interval"/>
-          <prop v="3x:0,0,0,0,0,0" k="interval_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="interval_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="1.1" k="offset_along_line"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_along_line_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_along_line_unit"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-          <prop v="interval" k="placement"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="1" k="rotate"/>
+      <symbol name="2" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+        <layer locked="0" enabled="1" pass="0" class="HashLine">
+          <prop k="average_angle_length" v="4"/>
+          <prop k="average_angle_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="average_angle_unit" v="MM"/>
+          <prop k="hash_angle" v="0"/>
+          <prop k="hash_length" v="4.4"/>
+          <prop k="hash_length_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="hash_length_unit" v="RenderMetersInMapUnits"/>
+          <prop k="interval" v="2.5"/>
+          <prop k="interval_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="interval_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_along_line" v="1.1"/>
+          <prop k="offset_along_line_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_along_line_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+          <prop k="placement" v="interval"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="rotate" v="1"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" value="" name="name"/>
-              <Option type="Map" name="properties">
-                <Option type="Map" name="offset">
-                  <Option type="bool" value="true" name="active"/>
-                  <Option type="QString" value="if(&quot;parking_source&quot;='separate_area' OR &quot;parking_source&quot;='separate_node',-2.2,if(&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder',2.2,if(&quot;parking&quot;='half_on_kerb',0,-2.2)))" name="expression"/>
-                  <Option type="int" value="3" name="type"/>
+              <Option name="name" type="QString" value=""/>
+              <Option name="properties" type="Map">
+                <Option name="offset" type="Map">
+                  <Option name="active" type="bool" value="true"/>
+                  <Option name="expression" type="QString" value="if((&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder') AND NOT &quot;parking_source&quot;='separate_area',2.2,if(&quot;parking&quot;='half_on_kerb',0,-2.2))"/>
+                  <Option name="type" type="int" value="3"/>
                 </Option>
               </Option>
-              <Option type="QString" value="collection" name="type"/>
+              <Option name="type" type="QString" value="collection"/>
             </Option>
           </data_defined_properties>
-          <symbol force_rhr="0" clip_to_extent="1" type="line" name="@2@0" alpha="1">
-            <layer enabled="1" locked="0" class="SimpleLine" pass="0">
-              <prop v="0" k="align_dash_pattern"/>
-              <prop v="flat" k="capstyle"/>
-              <prop v="5;2" k="customdash"/>
-              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-              <prop v="RenderMetersInMapUnits" k="customdash_unit"/>
-              <prop v="0" k="dash_pattern_offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
-              <prop v="MM" k="dash_pattern_offset_unit"/>
-              <prop v="0" k="draw_inside_polygon"/>
-              <prop v="bevel" k="joinstyle"/>
-              <prop v="31,12,173,255" k="line_color"/>
-              <prop v="solid" k="line_style"/>
-              <prop v="1.8" k="line_width"/>
-              <prop v="RenderMetersInMapUnits" k="line_width_unit"/>
-              <prop v="0" k="offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-              <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-              <prop v="0" k="ring_filter"/>
-              <prop v="0" k="tweak_dash_pattern_on_corners"/>
-              <prop v="0" k="use_custom_dash"/>
-              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <symbol name="@2@0" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+            <layer locked="0" enabled="1" pass="0" class="SimpleLine">
+              <prop k="align_dash_pattern" v="0"/>
+              <prop k="capstyle" v="flat"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="RenderMetersInMapUnits"/>
+              <prop k="dash_pattern_offset" v="0"/>
+              <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="dash_pattern_offset_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="31,12,173,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="1.8"/>
+              <prop k="line_width_unit" v="RenderMetersInMapUnits"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="tweak_dash_pattern_on_corners" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" value="" name="name"/>
-                  <Option type="Map" name="properties">
-                    <Option type="Map" name="outlineColor">
-                      <Option type="bool" value="true" name="active"/>
-                      <Option type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))" name="expression"/>
-                      <Option type="int" value="3" name="type"/>
+                  <Option name="name" type="QString" value=""/>
+                  <Option name="properties" type="Map">
+                    <Option name="outlineColor" type="Map">
+                      <Option name="active" type="bool" value="true"/>
+                      <Option name="expression" type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))"/>
+                      <Option name="type" type="int" value="3"/>
                     </Option>
                   </Option>
-                  <Option type="QString" value="collection" name="type"/>
+                  <Option name="type" type="QString" value="collection"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
       </symbol>
-      <symbol force_rhr="0" clip_to_extent="1" type="line" name="3" alpha="1">
-        <layer enabled="1" locked="0" class="SimpleLine" pass="0">
-          <prop v="0" k="align_dash_pattern"/>
-          <prop v="flat" k="capstyle"/>
-          <prop v="5;2" k="customdash"/>
-          <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="customdash_unit"/>
-          <prop v="0" k="dash_pattern_offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
-          <prop v="MM" k="dash_pattern_offset_unit"/>
-          <prop v="0" k="draw_inside_polygon"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="31,12,173,255" k="line_color"/>
-          <prop v="solid" k="line_style"/>
-          <prop v="1.8" k="line_width"/>
-          <prop v="RenderMetersInMapUnits" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="RenderMetersInMapUnits" k="offset_unit"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="0" k="tweak_dash_pattern_on_corners"/>
-          <prop v="0" k="use_custom_dash"/>
-          <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+      <symbol name="3" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+        <layer locked="0" enabled="1" pass="0" class="SimpleLine">
+          <prop k="align_dash_pattern" v="0"/>
+          <prop k="capstyle" v="flat"/>
+          <prop k="customdash" v="5;2"/>
+          <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="customdash_unit" v="RenderMetersInMapUnits"/>
+          <prop k="dash_pattern_offset" v="0"/>
+          <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="dash_pattern_offset_unit" v="MM"/>
+          <prop k="draw_inside_polygon" v="0"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="line_color" v="31,12,173,255"/>
+          <prop k="line_style" v="solid"/>
+          <prop k="line_width" v="1.8"/>
+          <prop k="line_width_unit" v="RenderMetersInMapUnits"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="RenderMetersInMapUnits"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="tweak_dash_pattern_on_corners" v="0"/>
+          <prop k="use_custom_dash" v="0"/>
+          <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" value="" name="name"/>
-              <Option type="Map" name="properties">
-                <Option type="Map" name="offset">
-                  <Option type="bool" value="true" name="active"/>
-                  <Option type="QString" value="if(&quot;parking_source&quot;='separate_area' OR &quot;parking_source&quot;='separate_node',-1.1,if(&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder',1.1,if(&quot;parking&quot;='half_on_kerb',0,-1.1)))" name="expression"/>
-                  <Option type="int" value="3" name="type"/>
+              <Option name="name" type="QString" value=""/>
+              <Option name="properties" type="Map">
+                <Option name="offset" type="Map">
+                  <Option name="active" type="bool" value="true"/>
+                  <Option name="expression" type="QString" value="if(&quot;parking_source&quot;='separate_area' OR &quot;parking_source&quot;='separate_node',-1.1,if(&quot;parking&quot;='on_kerb' OR &quot;parking&quot;='street_side' OR &quot;parking&quot;='shoulder',1.1,if(&quot;parking&quot;='half_on_kerb',0,-1.1)))"/>
+                  <Option name="type" type="int" value="3"/>
                 </Option>
-                <Option type="Map" name="outlineColor">
-                  <Option type="bool" value="true" name="active"/>
-                  <Option type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))" name="expression"/>
-                  <Option type="int" value="3" name="type"/>
+                <Option name="outlineColor" type="Map">
+                  <Option name="active" type="bool" value="true"/>
+                  <Option name="expression" type="QString" value="if(&quot;condition_class&quot; ILIKE '%mixed%' OR &quot;condition_class&quot; ILIKE '%residents%' OR &quot;condition_class&quot; ILIKE '%paid%','#ad0c89',if(&quot;condition_class&quot; ILIKE '%time_limited%','#c60ccd',if(&quot;condition_class&quot; ILIKE '%loading%' OR &quot;condition_class&quot; ILIKE '%charging%' OR &quot;condition_class&quot; ILIKE '%access_restriction%' OR &quot;condition_class&quot; ILIKE '%disabled%' OR &quot;condition_class&quot; ILIKE '%car_sharing%','#707070',if(&quot;condition_class&quot; ILIKE '%no_parking%','#a099d7',if(&quot;condition_class&quot; ILIKE '%taxi%','#ffb000','#1f0cad')))))"/>
+                  <Option name="type" type="int" value="3"/>
                 </Option>
               </Option>
-              <Option type="QString" value="collection" name="type"/>
+              <Option name="type" type="QString" value="collection"/>
             </Option>
           </data_defined_properties>
         </layer>
@@ -301,38 +301,38 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
-    <DiagramCategory maxScaleDenominator="1e+8" width="15" penWidth="0" spacing="5" scaleBasedVisibility="0" enabled="0" spacingUnitScale="3x:0,0,0,0,0,0" showAxis="1" penAlpha="255" scaleDependency="Area" direction="0" sizeScale="3x:0,0,0,0,0,0" rotationOffset="270" backgroundAlpha="255" labelPlacementMethod="XHeight" lineSizeType="MM" lineSizeScale="3x:0,0,0,0,0,0" minScaleDenominator="0" opacity="1" height="15" sizeType="MM" penColor="#000000" minimumSize="0" diagramOrientation="Up" barWidth="5" spacingUnit="MM" backgroundColor="#ffffff">
+    <DiagramCategory opacity="1" lineSizeType="MM" minScaleDenominator="0" penAlpha="255" sizeScale="3x:0,0,0,0,0,0" spacingUnit="MM" spacing="5" rotationOffset="270" maxScaleDenominator="1e+8" penColor="#000000" barWidth="5" showAxis="1" scaleDependency="Area" sizeType="MM" direction="0" minimumSize="0" labelPlacementMethod="XHeight" lineSizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" enabled="0" spacingUnitScale="3x:0,0,0,0,0,0" backgroundColor="#ffffff" height="15" backgroundAlpha="255" penWidth="0" width="15" scaleBasedVisibility="0">
       <fontProperties style="" description="Cantarell,11,-1,5,50,0,0,0,0,0"/>
-      <attribute label="" color="#000000" field=""/>
+      <attribute color="#000000" field="" label=""/>
       <axisSymbol>
-        <symbol force_rhr="0" clip_to_extent="1" type="line" name="" alpha="1">
-          <layer enabled="1" locked="0" class="SimpleLine" pass="0">
-            <prop v="0" k="align_dash_pattern"/>
-            <prop v="square" k="capstyle"/>
-            <prop v="5;2" k="customdash"/>
-            <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-            <prop v="MM" k="customdash_unit"/>
-            <prop v="0" k="dash_pattern_offset"/>
-            <prop v="3x:0,0,0,0,0,0" k="dash_pattern_offset_map_unit_scale"/>
-            <prop v="MM" k="dash_pattern_offset_unit"/>
-            <prop v="0" k="draw_inside_polygon"/>
-            <prop v="bevel" k="joinstyle"/>
-            <prop v="35,35,35,255" k="line_color"/>
-            <prop v="solid" k="line_style"/>
-            <prop v="0.26" k="line_width"/>
-            <prop v="MM" k="line_width_unit"/>
-            <prop v="0" k="offset"/>
-            <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-            <prop v="MM" k="offset_unit"/>
-            <prop v="0" k="ring_filter"/>
-            <prop v="0" k="tweak_dash_pattern_on_corners"/>
-            <prop v="0" k="use_custom_dash"/>
-            <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+        <symbol name="" clip_to_extent="1" force_rhr="0" type="line" alpha="1">
+          <layer locked="0" enabled="1" pass="0" class="SimpleLine">
+            <prop k="align_dash_pattern" v="0"/>
+            <prop k="capstyle" v="square"/>
+            <prop k="customdash" v="5;2"/>
+            <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="customdash_unit" v="MM"/>
+            <prop k="dash_pattern_offset" v="0"/>
+            <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="dash_pattern_offset_unit" v="MM"/>
+            <prop k="draw_inside_polygon" v="0"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="line_color" v="35,35,35,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.26"/>
+            <prop k="line_width_unit" v="MM"/>
+            <prop k="offset" v="0"/>
+            <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="ring_filter" v="0"/>
+            <prop k="tweak_dash_pattern_on_corners" v="0"/>
+            <prop k="use_custom_dash" v="0"/>
+            <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
             <data_defined_properties>
               <Option type="Map">
-                <Option type="QString" value="" name="name"/>
+                <Option name="name" type="QString" value=""/>
                 <Option name="properties"/>
-                <Option type="QString" value="collection" name="type"/>
+                <Option name="type" type="QString" value="collection"/>
               </Option>
             </data_defined_properties>
           </layer>
@@ -340,12 +340,12 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings placement="2" zIndex="0" priority="0" showAll="1" linePlacementFlags="18" obstacle="0" dist="0">
+  <DiagramLayerSettings obstacle="0" linePlacementFlags="18" showAll="1" placement="2" priority="0" dist="0" zIndex="0">
     <properties>
       <Option type="Map">
-        <Option type="QString" value="" name="name"/>
+        <Option name="name" type="QString" value=""/>
         <Option name="properties"/>
-        <Option type="QString" value="collection" name="type"/>
+        <Option name="type" type="QString" value="collection"/>
       </Option>
     </properties>
   </DiagramLayerSettings>
@@ -356,154 +356,140 @@
   <legend type="default-vector"/>
   <referencedLayers/>
   <fieldConfiguration>
-    <field configurationFlags="None" name="id">
+    <field name="id" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="highway">
+    <field name="highway" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="highway:name">
+    <field name="highway:name" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="highway:oneway">
+    <field name="highway:oneway" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="highway:width_proc">
+    <field name="parking_source" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="highway:width_proc:effective">
+    <field name="error_output" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="parking_source">
+    <field name="side" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="error_output">
+    <field name="parking" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="side">
+    <field name="orientation" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="parking">
+    <field name="capacity" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="orientation">
+    <field name="source:capacity" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="capacity">
+    <field name="surface" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="source:capacity">
+    <field name="markings" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="surface">
+    <field name="markings:type" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="markings">
+    <field name="width" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="width">
+    <field name="condition_class" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="offset">
+    <field name="vehicle_designated" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="condition_class">
+    <field name="vehicle_excluded" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="vehicle_designated">
+    <field name="zone" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="None" name="vehicle_excluded">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="zone">
-      <editWidget type="TextEdit">
-        <config>
-          <Option/>
-        </config>
-      </editWidget>
-    </field>
-    <field configurationFlags="None" name="layer">
+    <field name="offset" configurationFlags="None">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -512,130 +498,120 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias index="0" field="id" name=""/>
-    <alias index="1" field="highway" name=""/>
-    <alias index="2" field="highway:name" name=""/>
-    <alias index="3" field="highway:oneway" name=""/>
-    <alias index="4" field="highway:width_proc" name=""/>
-    <alias index="5" field="highway:width_proc:effective" name=""/>
-    <alias index="6" field="parking_source" name=""/>
-    <alias index="7" field="error_output" name=""/>
-    <alias index="8" field="side" name=""/>
-    <alias index="9" field="parking" name=""/>
-    <alias index="10" field="orientation" name=""/>
-    <alias index="11" field="capacity" name=""/>
-    <alias index="12" field="source:capacity" name=""/>
-    <alias index="13" field="surface" name=""/>
-    <alias index="14" field="markings" name=""/>
-    <alias index="15" field="width" name=""/>
-    <alias index="16" field="offset" name=""/>
-    <alias index="17" field="condition_class" name=""/>
-    <alias index="18" field="vehicle_designated" name=""/>
-    <alias index="19" field="vehicle_excluded" name=""/>
-    <alias index="20" field="zone" name=""/>
-    <alias index="21" field="layer" name=""/>
+    <alias field="id" name="" index="0"/>
+    <alias field="highway" name="" index="1"/>
+    <alias field="highway:name" name="" index="2"/>
+    <alias field="highway:oneway" name="" index="3"/>
+    <alias field="parking_source" name="" index="4"/>
+    <alias field="error_output" name="" index="5"/>
+    <alias field="side" name="" index="6"/>
+    <alias field="parking" name="" index="7"/>
+    <alias field="orientation" name="" index="8"/>
+    <alias field="capacity" name="" index="9"/>
+    <alias field="source:capacity" name="" index="10"/>
+    <alias field="surface" name="" index="11"/>
+    <alias field="markings" name="" index="12"/>
+    <alias field="markings:type" name="" index="13"/>
+    <alias field="width" name="" index="14"/>
+    <alias field="condition_class" name="" index="15"/>
+    <alias field="vehicle_designated" name="" index="16"/>
+    <alias field="vehicle_excluded" name="" index="17"/>
+    <alias field="zone" name="" index="18"/>
+    <alias field="offset" name="" index="19"/>
   </aliases>
   <defaults>
-    <default applyOnUpdate="0" expression="" field="id"/>
-    <default applyOnUpdate="0" expression="" field="highway"/>
-    <default applyOnUpdate="0" expression="" field="highway:name"/>
-    <default applyOnUpdate="0" expression="" field="highway:oneway"/>
-    <default applyOnUpdate="0" expression="" field="highway:width_proc"/>
-    <default applyOnUpdate="0" expression="" field="highway:width_proc:effective"/>
-    <default applyOnUpdate="0" expression="" field="parking_source"/>
-    <default applyOnUpdate="0" expression="" field="error_output"/>
-    <default applyOnUpdate="0" expression="" field="side"/>
-    <default applyOnUpdate="0" expression="" field="parking"/>
-    <default applyOnUpdate="0" expression="" field="orientation"/>
-    <default applyOnUpdate="0" expression="" field="capacity"/>
-    <default applyOnUpdate="0" expression="" field="source:capacity"/>
-    <default applyOnUpdate="0" expression="" field="surface"/>
-    <default applyOnUpdate="0" expression="" field="markings"/>
-    <default applyOnUpdate="0" expression="" field="width"/>
-    <default applyOnUpdate="0" expression="" field="offset"/>
-    <default applyOnUpdate="0" expression="" field="condition_class"/>
-    <default applyOnUpdate="0" expression="" field="vehicle_designated"/>
-    <default applyOnUpdate="0" expression="" field="vehicle_excluded"/>
-    <default applyOnUpdate="0" expression="" field="zone"/>
-    <default applyOnUpdate="0" expression="" field="layer"/>
+    <default field="id" expression="" applyOnUpdate="0"/>
+    <default field="highway" expression="" applyOnUpdate="0"/>
+    <default field="highway:name" expression="" applyOnUpdate="0"/>
+    <default field="highway:oneway" expression="" applyOnUpdate="0"/>
+    <default field="parking_source" expression="" applyOnUpdate="0"/>
+    <default field="error_output" expression="" applyOnUpdate="0"/>
+    <default field="side" expression="" applyOnUpdate="0"/>
+    <default field="parking" expression="" applyOnUpdate="0"/>
+    <default field="orientation" expression="" applyOnUpdate="0"/>
+    <default field="capacity" expression="" applyOnUpdate="0"/>
+    <default field="source:capacity" expression="" applyOnUpdate="0"/>
+    <default field="surface" expression="" applyOnUpdate="0"/>
+    <default field="markings" expression="" applyOnUpdate="0"/>
+    <default field="markings:type" expression="" applyOnUpdate="0"/>
+    <default field="width" expression="" applyOnUpdate="0"/>
+    <default field="condition_class" expression="" applyOnUpdate="0"/>
+    <default field="vehicle_designated" expression="" applyOnUpdate="0"/>
+    <default field="vehicle_excluded" expression="" applyOnUpdate="0"/>
+    <default field="zone" expression="" applyOnUpdate="0"/>
+    <default field="offset" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
-    <constraint notnull_strength="0" field="id" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="highway" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="highway:name" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="highway:oneway" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="highway:width_proc" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="highway:width_proc:effective" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="parking_source" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="error_output" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="side" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="parking" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="orientation" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="capacity" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="source:capacity" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="surface" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="markings" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="width" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="offset" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="condition_class" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="vehicle_designated" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="vehicle_excluded" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="zone" constraints="0" unique_strength="0" exp_strength="0"/>
-    <constraint notnull_strength="0" field="layer" constraints="0" unique_strength="0" exp_strength="0"/>
+    <constraint field="id" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="highway" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="highway:name" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="highway:oneway" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="parking_source" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="error_output" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="side" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="parking" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="orientation" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="capacity" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="source:capacity" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="surface" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="markings" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="markings:type" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="width" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="condition_class" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="vehicle_designated" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="vehicle_excluded" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="zone" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
+    <constraint field="offset" notnull_strength="0" exp_strength="0" unique_strength="0" constraints="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint exp="" field="id" desc=""/>
-    <constraint exp="" field="highway" desc=""/>
-    <constraint exp="" field="highway:name" desc=""/>
-    <constraint exp="" field="highway:oneway" desc=""/>
-    <constraint exp="" field="highway:width_proc" desc=""/>
-    <constraint exp="" field="highway:width_proc:effective" desc=""/>
-    <constraint exp="" field="parking_source" desc=""/>
-    <constraint exp="" field="error_output" desc=""/>
-    <constraint exp="" field="side" desc=""/>
-    <constraint exp="" field="parking" desc=""/>
-    <constraint exp="" field="orientation" desc=""/>
-    <constraint exp="" field="capacity" desc=""/>
-    <constraint exp="" field="source:capacity" desc=""/>
-    <constraint exp="" field="surface" desc=""/>
-    <constraint exp="" field="markings" desc=""/>
-    <constraint exp="" field="width" desc=""/>
-    <constraint exp="" field="offset" desc=""/>
-    <constraint exp="" field="condition_class" desc=""/>
-    <constraint exp="" field="vehicle_designated" desc=""/>
-    <constraint exp="" field="vehicle_excluded" desc=""/>
-    <constraint exp="" field="zone" desc=""/>
-    <constraint exp="" field="layer" desc=""/>
+    <constraint field="id" exp="" desc=""/>
+    <constraint field="highway" exp="" desc=""/>
+    <constraint field="highway:name" exp="" desc=""/>
+    <constraint field="highway:oneway" exp="" desc=""/>
+    <constraint field="parking_source" exp="" desc=""/>
+    <constraint field="error_output" exp="" desc=""/>
+    <constraint field="side" exp="" desc=""/>
+    <constraint field="parking" exp="" desc=""/>
+    <constraint field="orientation" exp="" desc=""/>
+    <constraint field="capacity" exp="" desc=""/>
+    <constraint field="source:capacity" exp="" desc=""/>
+    <constraint field="surface" exp="" desc=""/>
+    <constraint field="markings" exp="" desc=""/>
+    <constraint field="markings:type" exp="" desc=""/>
+    <constraint field="width" exp="" desc=""/>
+    <constraint field="condition_class" exp="" desc=""/>
+    <constraint field="vehicle_designated" exp="" desc=""/>
+    <constraint field="vehicle_excluded" exp="" desc=""/>
+    <constraint field="zone" exp="" desc=""/>
+    <constraint field="offset" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;condition_class&quot;" sortOrder="0">
+  <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="&quot;condition_class&quot;">
     <columns>
-      <column width="271" hidden="0" type="field" name="id"/>
-      <column width="-1" hidden="0" type="field" name="highway"/>
-      <column width="-1" hidden="0" type="field" name="highway:name"/>
-      <column width="-1" hidden="0" type="field" name="error_output"/>
-      <column width="-1" hidden="0" type="field" name="parking"/>
-      <column width="-1" hidden="0" type="field" name="capacity"/>
-      <column width="-1" hidden="0" type="field" name="width"/>
-      <column width="-1" hidden="0" type="field" name="offset"/>
-      <column width="-1" hidden="1" type="actions"/>
-      <column width="-1" hidden="0" type="field" name="highway:width_proc"/>
-      <column width="-1" hidden="0" type="field" name="highway:width_proc:effective"/>
-      <column width="-1" hidden="0" type="field" name="orientation"/>
-      <column width="-1" hidden="0" type="field" name="source:capacity"/>
-      <column width="-1" hidden="0" type="field" name="layer"/>
-      <column width="-1" hidden="0" type="field" name="side"/>
-      <column width="-1" hidden="0" type="field" name="markings"/>
-      <column width="258" hidden="0" type="field" name="condition_class"/>
-      <column width="-1" hidden="0" type="field" name="vehicle_designated"/>
-      <column width="-1" hidden="0" type="field" name="vehicle_excluded"/>
-      <column width="-1" hidden="0" type="field" name="highway:oneway"/>
-      <column width="-1" hidden="0" type="field" name="parking_source"/>
-      <column width="-1" hidden="0" type="field" name="surface"/>
-      <column width="-1" hidden="0" type="field" name="zone"/>
+      <column width="271" name="id" type="field" hidden="0"/>
+      <column width="-1" name="highway" type="field" hidden="0"/>
+      <column width="-1" name="highway:name" type="field" hidden="0"/>
+      <column width="-1" name="error_output" type="field" hidden="0"/>
+      <column width="-1" name="parking" type="field" hidden="0"/>
+      <column width="-1" name="capacity" type="field" hidden="0"/>
+      <column width="-1" name="width" type="field" hidden="0"/>
+      <column width="-1" name="offset" type="field" hidden="0"/>
+      <column width="-1" type="actions" hidden="1"/>
+      <column width="-1" name="orientation" type="field" hidden="0"/>
+      <column width="-1" name="source:capacity" type="field" hidden="0"/>
+      <column width="-1" name="side" type="field" hidden="0"/>
+      <column width="-1" name="markings" type="field" hidden="0"/>
+      <column width="258" name="condition_class" type="field" hidden="0"/>
+      <column width="-1" name="vehicle_designated" type="field" hidden="0"/>
+      <column width="-1" name="vehicle_excluded" type="field" hidden="0"/>
+      <column width="-1" name="highway:oneway" type="field" hidden="0"/>
+      <column width="-1" name="parking_source" type="field" hidden="0"/>
+      <column width="-1" name="surface" type="field" hidden="0"/>
+      <column width="-1" name="zone" type="field" hidden="0"/>
+      <column width="-1" name="markings:type" type="field" hidden="0"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -687,6 +663,7 @@ def my_form_open(dialog, layer, feature):
     <field name="id" editable="1"/>
     <field name="layer" editable="1"/>
     <field name="markings" editable="1"/>
+    <field name="markings:type" editable="1"/>
     <field name="maxstay" editable="1"/>
     <field name="maxstay:conditional" editable="1"/>
     <field name="offset" editable="1"/>
@@ -707,44 +684,45 @@ def my_form_open(dialog, layer, feature):
     <field name="zone" editable="1"/>
   </editable>
   <labelOnTop>
-    <field name="access" labelOnTop="0"/>
-    <field name="access:conditional" labelOnTop="0"/>
-    <field name="capacity" labelOnTop="0"/>
-    <field name="condition" labelOnTop="0"/>
-    <field name="condition:other" labelOnTop="0"/>
-    <field name="condition:other:time" labelOnTop="0"/>
-    <field name="condition_class" labelOnTop="0"/>
-    <field name="error_output" labelOnTop="0"/>
-    <field name="fee" labelOnTop="0"/>
-    <field name="fee:conditional" labelOnTop="0"/>
-    <field name="highway" labelOnTop="0"/>
-    <field name="highway:name" labelOnTop="0"/>
-    <field name="highway:oneway" labelOnTop="0"/>
-    <field name="highway:width" labelOnTop="0"/>
-    <field name="highway:width:effective" labelOnTop="0"/>
-    <field name="highway:width_proc" labelOnTop="0"/>
-    <field name="highway:width_proc:effective" labelOnTop="0"/>
-    <field name="id" labelOnTop="0"/>
-    <field name="layer" labelOnTop="0"/>
-    <field name="markings" labelOnTop="0"/>
-    <field name="maxstay" labelOnTop="0"/>
-    <field name="maxstay:conditional" labelOnTop="0"/>
-    <field name="offset" labelOnTop="0"/>
-    <field name="orientation" labelOnTop="0"/>
-    <field name="parking" labelOnTop="0"/>
-    <field name="parking_source" labelOnTop="0"/>
-    <field name="path" labelOnTop="0"/>
-    <field name="position" labelOnTop="0"/>
-    <field name="restriction" labelOnTop="0"/>
-    <field name="restriction:conditional" labelOnTop="0"/>
-    <field name="side" labelOnTop="0"/>
-    <field name="source:capacity" labelOnTop="0"/>
-    <field name="surface" labelOnTop="0"/>
-    <field name="vehicle_designated" labelOnTop="0"/>
-    <field name="vehicle_excluded" labelOnTop="0"/>
-    <field name="vehicles" labelOnTop="0"/>
-    <field name="width" labelOnTop="0"/>
-    <field name="zone" labelOnTop="0"/>
+    <field labelOnTop="0" name="access"/>
+    <field labelOnTop="0" name="access:conditional"/>
+    <field labelOnTop="0" name="capacity"/>
+    <field labelOnTop="0" name="condition"/>
+    <field labelOnTop="0" name="condition:other"/>
+    <field labelOnTop="0" name="condition:other:time"/>
+    <field labelOnTop="0" name="condition_class"/>
+    <field labelOnTop="0" name="error_output"/>
+    <field labelOnTop="0" name="fee"/>
+    <field labelOnTop="0" name="fee:conditional"/>
+    <field labelOnTop="0" name="highway"/>
+    <field labelOnTop="0" name="highway:name"/>
+    <field labelOnTop="0" name="highway:oneway"/>
+    <field labelOnTop="0" name="highway:width"/>
+    <field labelOnTop="0" name="highway:width:effective"/>
+    <field labelOnTop="0" name="highway:width_proc"/>
+    <field labelOnTop="0" name="highway:width_proc:effective"/>
+    <field labelOnTop="0" name="id"/>
+    <field labelOnTop="0" name="layer"/>
+    <field labelOnTop="0" name="markings"/>
+    <field labelOnTop="0" name="markings:type"/>
+    <field labelOnTop="0" name="maxstay"/>
+    <field labelOnTop="0" name="maxstay:conditional"/>
+    <field labelOnTop="0" name="offset"/>
+    <field labelOnTop="0" name="orientation"/>
+    <field labelOnTop="0" name="parking"/>
+    <field labelOnTop="0" name="parking_source"/>
+    <field labelOnTop="0" name="path"/>
+    <field labelOnTop="0" name="position"/>
+    <field labelOnTop="0" name="restriction"/>
+    <field labelOnTop="0" name="restriction:conditional"/>
+    <field labelOnTop="0" name="side"/>
+    <field labelOnTop="0" name="source:capacity"/>
+    <field labelOnTop="0" name="surface"/>
+    <field labelOnTop="0" name="vehicle_designated"/>
+    <field labelOnTop="0" name="vehicle_excluded"/>
+    <field labelOnTop="0" name="vehicles"/>
+    <field labelOnTop="0" name="width"/>
+    <field labelOnTop="0" name="zone"/>
   </labelOnTop>
   <dataDefinedFieldProperties/>
   <widgets/>
