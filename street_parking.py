@@ -6,7 +6,7 @@
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2023-01-31                                                 #
+#   > version/date: 2023-02-08                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -91,7 +91,6 @@ street_key_list = [
 'id',
 'highway',
 'name',
-#'access',
 'oneway',
 'width_proc',
 'width_proc:effective',
@@ -134,7 +133,6 @@ parking_attribute_list = [
 'side',
 'highway',
 'highway:name',
-#'highway:access',
 'highway:oneway',
 'parking',
 'orientation',
@@ -2005,21 +2003,24 @@ if layers:
     #convert street parking segments into chains of points for each individual vehicle
     if create_point_chain:
         print(time.strftime('%H:%M:%S', time.localtime()), 'Convert lanes to points...')
-        #TODO use calculation from Straßenraumkarte Neukölln Script that is very precise
         #TODO capacity of bus parking spaces isn't calculated correctly
-        #Method A: simple calculation for nodes on kerb line
-        #layer_parking_chain = processing.run('native:pointsalonglines', {'INPUT' : layer_parking, 'DISTANCE' : QgsProperty.fromExpression('if("orientation" = \'parallel\' OR "orientation" = \'diagonal\' OR "orientation" = \'perpendicular\', $length / "capacity", 0)'), 'START_OFFSET' : QgsProperty.fromExpression('if(\"orientation\" = \'parallel\', 2.6 - 0.4, if(\"orientation\" = \'diagonal\', 1.27, if(\"orientation\" = \'perpendicular\', 1.25 - 0.4, 0)))'), 'END_OFFSET' : QgsProperty.fromExpression('if(\"orientation\" = \'parallel\', 2.6 - 0.4, if(\"orientation\" = \'diagonal\', 3.11, if(\"orientation\" = \'perpendicular\', 1.25 - 0.4, 0)))'), 'OUTPUT' : dir_output + 'parking_points.geojson' })
-
-        #Method B: complex calculation and offset of the point to the centre of the vehicle
-        layer_parking_chain = processing.run('native:pointsalonglines', {'INPUT' : layer_parking, 'DISTANCE' : QgsProperty.fromExpression('if("source:capacity" = \'estimated\', if("orientation" = \'diagonal\', 3.1, if("orientation" = \'perpendicular\', 2.5, 5.2)), if("capacity" = 1, $length, if($length < if("orientation" = \'diagonal\', 3.1 * "capacity", if("orientation" = \'perpendicular\', 2.5 * "capacity", (5.2 * "capacity") - 0.8)), ($length + (if("orientation" = \'parallel\', 0.8, if("orientation" = \'perpendicular\', 0.5, 0))) - (2 * if("orientation" = \'diagonal\', 1.55, if("orientation" = \'perpendicular\', 1.25, 2.6)))) / ("capacity" - 1), ($length - (2 * if("orientation" = \'diagonal\', 1.55, if("orientation" = \'perpendicular\', 1.25, 2.6)))) / ("capacity" - 1))))'), 'START_OFFSET' : QgsProperty.fromExpression('if("source:capacity" = \'estimated\', if("orientation" = \'diagonal\', ($length - (3.1*("capacity" - 1))) / 2, if("orientation" = \'perpendicular\', ($length - (2.5*("capacity" - 1))) / 2, ($length - (5.2*("capacity" - 1))) / 2)), if("capacity" < 2, $length / 2, if("orientation" = \'diagonal\', 1.55, if("orientation" = \'perpendicular\', if($length < if("orientation" = \'diagonal\', 3.1 * "capacity", if("orientation" = \'perpendicular\', 2.5 * "capacity", (5.2 * "capacity") - 0.8)), 0.9, 1.25), if($length < if("orientation" = \'diagonal\', 3.1 * "capacity", if("orientation" = \'perpendicular\', 2.5 * "capacity", (5.2 * "capacity") - 0.8)), 2.2, 2.6)))))'), 'OUTPUT': 'memory:'})['OUTPUT']
-        layer_parking_chain = processing.run('native:translategeometry', {'INPUT' : layer_parking_chain, 'DELTA_X' : QgsProperty.fromExpression('if("parking" = \'lane\' or "parking" IS NULL or "parking_source" ILIKE \'%separate%\', cos((("angle") - if("orientation" = \'diagonal\', if("side" = \'left\' AND "highway:oneway" = \'true\', -27, 27), 0)) * (pi() / 180)) * if("orientation" = \'diagonal\', -2.1, if("orientation" = \'perpendicular\', -2.2, -1)), if(("parking" = \'street_side\' or "parking" = \'on_kerb\' or "parking" = \'shoulder\') and not "parking_source" ILIKE \'%separate%\', -cos((("angle") - if("orientation" = \'diagonal\', if("side" = \'left\' and "highway:oneway" = \'yes\', -27, 27), 0)) * (pi() / 180)) * if("orientation" = \'diagonal\', -2.1, if("orientation" = \'perpendicular\', -2.2, -1)), 0))'), 'DELTA_Y' : QgsProperty.fromExpression('if("parking" = \'lane\' or "parking" IS NULL or "parking_source" ILKIE \'%separate%\', sin(("angle" - 180 - if("orientation" = \'diagonal\', if("side" = \'left\' and "highway:oneway" = \'yes\', -27, 27), 0)) * (pi() / 180)) * if("orientation" = \'diagonal\', -2.1, if("orientation" = \'perpendicular\', -2.2, -1)), if(("parking" = \'street_side\' or "parking" = \'on_kerb\' or "parking" = \'shoulder\') and not "parking_source" ILIKE \'%separate%\', -sin(("angle" - 180 - if("orientation" = \'diagonal\', if("side" = \'left\' and "highway:oneway" = \'yes\', -27, 27), 0)) * (pi() / 180)) * if("orientation" = \'diagonal\', -2.1, if("orientation" = \'perpendicular\', -2.2, -1)), 0))'), 'OUTPUT': 'memory:'})['OUTPUT']
+        layer_parking_chain = processing.run('native:pointsalonglines', {'INPUT' : layer_parking,
+            'DISTANCE' : QgsProperty.fromExpression('if("vehicle_designated" = \'bus\', 12, if("source:capacity" = \'estimated\', if("orientation" = \'diagonal\', 3.1, if("orientation" = \'perpendicular\', 2.5, 5.2)), if("capacity" = 1, $length, if($length < if("orientation" = \'diagonal\', 3.1 * "capacity", if("orientation" = \'perpendicular\', 2.5 * "capacity", (5.2 * "capacity") - 0.8)), ($length + (if("orientation" = \'parallel\', 0.8, if("orientation" = \'perpendicular\', 0.5, 0))) - (2 * if("orientation" = \'diagonal\', 1.55, if("orientation" = \'perpendicular\', 1.25, 2.6)))) / ("capacity" - 1), ($length - (2 * if("orientation" = \'diagonal\', 1.55, if("orientation" = \'perpendicular\', 1.25, 2.6)))) / ("capacity" - 1)))))'),
+            'START_OFFSET' : QgsProperty.fromExpression('if("vehicle_designated" = \'bus\', 6 + (($length - (12 * "capacity")) / 2), if("source:capacity" = \'estimated\', if("orientation" = \'diagonal\', ($length - (3.1*("capacity" - 1))) / 2, if("orientation" = \'perpendicular\', ($length - (2.5*("capacity" - 1))) / 2, ($length - (5.2*("capacity" - 1))) / 2)), if("capacity" < 2, $length / 2, if("orientation" = \'diagonal\', 1.55, if("orientation" = \'perpendicular\', if($length < if("orientation" = \'diagonal\', 3.1 * "capacity", if("orientation" = \'perpendicular\', 2.5 * "capacity", (5.2 * "capacity") - 0.8)), 0.9, 1.25), if($length < if("orientation" = \'diagonal\', 3.1 * "capacity", if("orientation" = \'perpendicular\', 2.5 * "capacity", (5.2 * "capacity") - 0.8)), 2.2, 2.6))))))'),
+            'OUTPUT': 'memory:'})['OUTPUT']
+        #Formula for translation to vehicle center point: -cos/sin "angle" * distance to kerb, inverted for on_kerb/shoulder parking, + offset if diagonal parking (inverted, if diagonal parking direction is inverted, esp. in oneway streets on the left side – 1.2 is a good fitting default in most situations, in reality it's depending on the exact parking angle)
+        layer_parking_chain = processing.run('native:translategeometry', {'INPUT' : layer_parking_chain,
+            'DELTA_X' : QgsProperty.fromExpression('-cos(("angle") * (pi() / 180)) * if("orientation" = \'diagonal\', 2.1, if("orientation" = \'perpendicular\', 2.2, 1)) * if(("parking" = \'on_kerb\' or "parking" = \'street_side\' or "parking" = \'shoulder\') and not "parking_source" = \'separate_area\', -1, if("parking" = \'lane\' or "parking" IS NULL or "parking_source" = \'separate_area\', 1, 0)) + if("orientation" = \'diagonal\', sin(("angle") * (pi() / 180)) * if("highway:oneway" = \'yes\' and "side" = \'left\', 1.2, -1.2) * if(("parking" = \'on_kerb\' or "parking" = \'street_side\' or "parking" = \'shoulder\') and not "parking_source" = \'separate_area\', -1, if("parking" = \'lane\' or "parking" IS NULL or "parking_source" = \'separate_area\', 1, 0)), 0)'),
+            'DELTA_Y' : QgsProperty.fromExpression('sin(("angle") * (pi() / 180)) * if("orientation" = \'diagonal\', 2.1, if("orientation" = \'perpendicular\', 2.2, 1)) * if(("parking" = \'on_kerb\' or "parking" = \'street_side\' or "parking" = \'shoulder\') and not "parking_source" = \'separate_area\', -1, if("parking" = \'lane\' or "parking" IS NULL or "parking_source" = \'separate_area\', 1, 0)) + if("orientation" = \'diagonal\', cos(("angle") * (pi() / 180)) * if("highway:oneway" = \'yes\' and "side" = \'left\', 1.2, -1.2) * if(("parking" = \'on_kerb\' or "parking" = \'street_side\' or "parking" = \'shoulder\') and not "parking_source" = \'separate_area\', -1, if("parking" = \'lane\' or "parking" IS NULL or "parking_source" = \'separate_area\', 1, 0)), 0)'),
+            'OUTPUT': 'memory:'})['OUTPUT']
 
         #clean up point attributes
         point_attribute_list = parking_attribute_list.copy()
-        for attr in ['capacity','source:capacity','offset']:
+        for attr in ['error_output', 'capacity','source:capacity', 'width','offset']:
             if attr in point_attribute_list:
                 point_attribute_list.remove(attr)
         point_attribute_list.append('angle')
+        point_attribute_list.remove('offset')
         layer_parking_chain = clearAttributes(layer_parking_chain, point_attribute_list)
 
         #offset to the left side of the line for reversed line directions/left hand traffic
