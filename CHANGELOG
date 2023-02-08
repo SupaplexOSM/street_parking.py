@@ -1,3 +1,4 @@
+2023-02-08 * Improved position/offset of the point chain data set
 2023-01-30 ! Separately mapped parking areas that are cutted to multiparts are converted to single parts
 2023-01-30 + Parking access restrictions consider road access attributes if no specific parking access is given
 2023-01-11 + Include (buffers) at turning circles and turning loops
