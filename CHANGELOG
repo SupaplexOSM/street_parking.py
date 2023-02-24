@@ -1,3 +1,6 @@
+2023-02-20 * condition_class remains NULL instead of "free" if parking fee isn't specified
+2023-02-16 + Added length (in m) and a unique id calculated from the coordinate to the attribute list, therefore changed name of "id" attribute to "osm_id"
+2023-02-16 + Added "location", "informal" and "operator:type" to the attribute list
 2023-02-08 * Improved position/offset of the point chain data set
 2023-01-30 ! Separately mapped parking areas that are cutted to multiparts are converted to single parts
 2023-01-30 + Parking access restrictions consider road access attributes if no specific parking access is given
