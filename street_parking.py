@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------#
-#   Parking lane analysis with OSM data                                        #
+#   Street parking analysis with OSM data                                      #
 #------------------------------------------------------------------------------#
 #   OSM data processing for QGIS/PyGIS to generate street parking data.        #
 #   Run this Overpass query -> https://overpass-turbo.eu/s/1q1g                #
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2023-02-08                                                 #
+#   > version/date: 2023-02-20                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -121,6 +121,7 @@ parking_processing_key_list = [
 'motor_vehicle',
 'surface',
 'oneway',
+'operator:type',
 'width_proc',
 'width_proc:effective',
 'parking_source',
@@ -130,6 +131,7 @@ parking_processing_key_list = [
 #attributes for the final parking layer
 parking_attribute_list = [
 'id',
+'osm_id',
 'side',
 'highway',
 'highway:name',
@@ -146,8 +148,12 @@ parking_attribute_list = [
 'vehicle_designated',
 'vehicle_excluded',
 'zone',
+'location',
+'informal',
+'operator:type',
 'parking_source',
-'error_output'
+#'error_output',
+'length'
 ]
 
 
@@ -529,6 +535,9 @@ def prepareParkingLane(layer, side, clean):
     id_vehicle_designated = layer.fields().indexOf('vehicle_designated')
     id_vehicle_excluded = layer.fields().indexOf('vehicle_excluded')
     id_zone = layer.fields().indexOf('zone')
+    id_location = layer.fields().indexOf('location')
+    id_informal = layer.fields().indexOf('informal')
+    id_operator_type = layer.fields().indexOf('operator:type')
     id_parking_source = layer.fields().indexOf('parking_source')
     id_error = layer.fields().indexOf('error_output')
 
@@ -545,6 +554,9 @@ def prepareParkingLane(layer, side, clean):
         condition_class = NULL
         vehicle_designated = vehicle_excluded = NULL
         zone = NULL
+        location = NULL
+        informal = NULL
+        operator_type = NULL
         offset = NULL
         parking_source = NULL
 
@@ -611,6 +623,19 @@ def prepareParkingLane(layer, side, clean):
             condition_class = NULL
         if layer.fields().indexOf('parking:' + side + ':zone') != -1:
             zone = getSideAttribute(layer, feature, side, 'zone', 0)
+        if layer.fields().indexOf('parking:' + side + ':location') != -1:
+            location = getSideAttribute(layer, feature, side, 'location', 0)
+        if layer.fields().indexOf('parking:' + side + ':informal') != -1:
+            informal = getSideAttribute(layer, feature, side, 'informal', 0)
+        if layer.fields().indexOf('parking:' + side + ':operator:type') != -1:
+            operator_type = getSideAttribute(layer, feature, side, 'operator:type', 0)
+        #adopt operator:type of street center line
+        if not operator_type:
+            highway_operator_type = NULL
+            if layer.fields().indexOf('highway:operator:type') != -1:
+                highway_operator_type = feature.attribute('highway:operator:type')
+            if highway_operator_type:
+                operator_type = highway_operator_type
 
         #ermittelte Parkstreifeninformationen in die Attributtabelle des Straßenabschnitts übertragen
         layer.changeAttributeValue(feature.id(), id_side, side)
@@ -627,6 +652,9 @@ def prepareParkingLane(layer, side, clean):
         layer.changeAttributeValue(feature.id(), id_vehicle_designated, vehicle_designated)
         layer.changeAttributeValue(feature.id(), id_vehicle_excluded, vehicle_excluded)
         layer.changeAttributeValue(feature.id(), id_zone, zone)
+        layer.changeAttributeValue(feature.id(), id_location, location)
+        layer.changeAttributeValue(feature.id(), id_informal, informal)
+        layer.changeAttributeValue(feature.id(), id_operator_type, operator_type)
 
         #Quelle der Parkinformation speichern
         parking_source = feature.attribute('parking_source')
@@ -744,7 +772,7 @@ def getConditionClass(layer, feature, side):
         condition_class = addConditionClass(condition_class, 'paid', fee_cond)
 
     #free parking (unmanaged parking: no fee or maxstay, no residential zone)
-    if (fee == '' or fee == 'no' or no_fee_cond) and maxstay in ['', 'no', 'none'] and (access in ['', 'yes', 'destination', 'designated', 'permissive'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_designated) or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)) and zone in ['', 'no', 'none'] and (restriction in ['', 'no', 'none'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)):
+    if (fee == 'no' or no_fee_cond) and maxstay in ['', 'no', 'none'] and (access in ['', 'yes', 'destination', 'designated', 'permissive'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_designated) or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)) and zone in ['', 'no', 'none'] and (restriction in ['', 'no', 'none'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)):
         if condition_class != 'mixed' and condition_class != 'residents' and condition_class != 'paid':
             condition_class = addConditionClass(condition_class, 'free', '')
 
@@ -1161,6 +1189,8 @@ def bufferTurningCircles(layer_parking, layer_points, side):
 # > side: The affected side of the street (left, right or both)
 #-------------------------------------------------------------------------------
 
+    #TODO: buffer only if there isn't a no-parking-segment at the end of the road (that represents the "real" dimension the buffer is only interpolating)
+
     #generate buffers for circles and loops
     processing.run('qgis:selectbyexpression', {'INPUT' : layer_points, 'EXPRESSION' : '\"highway\" = \'turning_circle\''})
     buffer01 = processing.run('native:buffer', {'DISTANCE' : buffer_turning_circle, 'INPUT' : QgsProcessingFeatureSourceDefinition(layer_points.id(), selectedFeaturesOnly=True), 'OUTPUT': 'memory:'})['OUTPUT']
@@ -1439,12 +1469,15 @@ def processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_ker
     layer_kerb = processing.run('native:explodelines', { 'INPUT' : layer_virtual_kerb, 'OUTPUT': 'memory:'})['OUTPUT']
     layer_parking_lines = processing.run('qgis:fieldcalculator', { 'INPUT': layer_parking_lines, 'FIELD_NAME': 'proc_line_angle', 'FIELD_TYPE': 0, 'FIELD_LENGTH': 6, 'FIELD_PRECISION': 3, 'NEW_FIELD': True, 'FORMULA': 'line_interpolate_angle($geometry,0)', 'OUTPUT': 'memory:'})['OUTPUT']
     layer_kerb = processing.run('qgis:fieldcalculator', { 'INPUT': layer_kerb, 'FIELD_NAME': 'proc_line_angle', 'FIELD_TYPE': 0, 'FIELD_LENGTH': 6, 'FIELD_PRECISION': 3, 'NEW_FIELD': True, 'FORMULA': 'line_interpolate_angle($geometry,0)', 'OUTPUT': 'memory:'})['OUTPUT']
-    #atopt line angle of the nearest street segment at every parking area outline segment
+    #adopt line angle of the nearest street segment at every parking area outline segment
     layer_parking_lines = processing.run('native:joinbynearest', {'INPUT': layer_parking_lines, 'INPUT_2' : layer_kerb, 'FIELDS_TO_COPY' : ['highway','highway:name','proc_line_angle'], 'PREFIX' : 'highway:', 'MAX_DISTANCE' : 15, 'NEIGHBORS' : 1, 'OUTPUT': 'memory:'})['OUTPUT']
     #ignore line segments whose angle deviates significantly from the angle of the road to create 'inner' and 'outer' lines
     #outer line represents the virtual kerb the parking lane is located/rendered at
     #inner line is needed for interpolate the parking orientation if not mapped
     layer_parking_lines_outer = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_parking_lines, 'EXPRESSION' : 'abs("proc_line_angle" - "highway:proc_line_angle") < 25', 'OUTPUT': 'memory:'})['OUTPUT']
+
+    #TODO: Add inversed calculation for parking features on the street median/in the middle of the street
+
     #dissolve line segments with same id (= line segments of the same parking area)
     layer_parking_lines_outer = processing.run('native:dissolve', { 'FIELD' : ['id'], 'INPUT' : layer_parking_lines_outer, 'OUTPUT': 'memory:'})['OUTPUT']
     layer_parking_lines_outer = processing.run('native:multiparttosingleparts', { 'INPUT' : layer_parking_lines_outer, 'OUTPUT': 'memory:'})['OUTPUT']
@@ -1972,6 +2005,7 @@ if layers:
         #if missing in attributes if separate parking features: get side, highway, highway name and oneway from nearest virtual kerb line
         layer_parking_separate = pickMissingHighwayAttributes(layer_parking_separate, layer_virtual_kerb)
 
+    print(time.strftime('%H:%M:%S', time.localtime()), 'Final line data cleanup...')
     #merge with street parking lines from separately mapped street parking features
     if process_separate_parking:
         layer_parking = processing.run('native:mergevectorlayers', {'LAYERS' : [layer_parking, layer_parking_separate], 'OUTPUT': 'memory:'})['OUTPUT']
@@ -1983,8 +2017,18 @@ if layers:
     #...and add capacity information to line segments or correct cutting errors
     layer_parking = getCapacity(layer_parking)
 
+    #add a length attribute, change id->osm_id and add a unique id derived from coordinate
+    layer_parking = processing.run('qgis:fieldcalculator', { 'INPUT': layer_parking, 'FIELD_NAME': 'length', 'FIELD_TYPE': 0, 'FIELD_LENGTH': 8, 'FIELD_PRECISION': 3, 'NEW_FIELD': True, 'FORMULA': 'round($length, 3)', 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_parking = processing.run('qgis:fieldcalculator', { 'INPUT': layer_parking, 'FIELD_NAME': 'osm_id', 'FIELD_TYPE': 2, 'FIELD_LENGTH': 20, 'FIELD_PRECISION': 0, 'NEW_FIELD': True, 'FORMULA': '\"id\"', 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_parking = processing.run('qgis:fieldcalculator', { 'INPUT': layer_parking, 'FIELD_NAME': 'id', 'FIELD_TYPE': 1, 'FIELD_LENGTH': 16, 'FIELD_PRECISION': 0, 'FORMULA': 'to_int(x_max($geometry) - ((x_max($geometry) - x_min($geometry)) / 2)) * to_int(y_max($geometry) - ((y_max($geometry) - y_min($geometry)) / 2))', 'OUTPUT': 'memory:'})['OUTPUT']
+
     #delete unimportant attributes and save output file
-    layer_parking = clearAttributes(layer_parking, parking_attribute_list)
+    line_attribute_list = parking_attribute_list.copy()
+    for attr in ['error_output', 'offset']:
+        if attr in line_attribute_list:
+            line_attribute_list.remove(attr)
+    line_attribute_list.remove('offset') #FIX: why isn't offset deleted sucessfully in the step above!? (see also in point data cleanup below)
+    layer_parking = clearAttributes(layer_parking, line_attribute_list)
 
     print(time.strftime('%H:%M:%S', time.localtime()), 'Save street parking features...')
     qgis.core.QgsVectorFileWriter.writeAsVectorFormat(layer_parking, dir_output + 'street_parking_lines.geojson', 'utf-8', QgsCoordinateReferenceSystem(crs_to), save_options.driverName)
@@ -2014,13 +2058,16 @@ if layers:
             'DELTA_Y' : QgsProperty.fromExpression('sin(("angle") * (pi() / 180)) * if("orientation" = \'diagonal\', 2.1, if("orientation" = \'perpendicular\', 2.2, 1)) * if(("parking" = \'on_kerb\' or "parking" = \'street_side\' or "parking" = \'shoulder\') and not "parking_source" = \'separate_area\', -1, if("parking" = \'lane\' or "parking" IS NULL or "parking_source" = \'separate_area\', 1, 0)) + if("orientation" = \'diagonal\', cos(("angle") * (pi() / 180)) * if("highway:oneway" = \'yes\' and "side" = \'left\', 1.2, -1.2) * if(("parking" = \'on_kerb\' or "parking" = \'street_side\' or "parking" = \'shoulder\') and not "parking_source" = \'separate_area\', -1, if("parking" = \'lane\' or "parking" IS NULL or "parking_source" = \'separate_area\', 1, 0)), 0)'),
             'OUTPUT': 'memory:'})['OUTPUT']
 
+        #recalculate unique id from coordinates
+        layer_parking_chain = processing.run('qgis:fieldcalculator', { 'INPUT': layer_parking_chain, 'FIELD_NAME': 'id', 'FIELD_TYPE': 1, 'FIELD_LENGTH': 16, 'FIELD_PRECISION': 0, 'FORMULA': 'to_int(x_max($geometry) - ((x_max($geometry) - x_min($geometry)) / 2)) * to_int(y_max($geometry) - ((y_max($geometry) - y_min($geometry)) / 2))', 'OUTPUT': 'memory:'})['OUTPUT']
+
         #clean up point attributes
         point_attribute_list = parking_attribute_list.copy()
-        for attr in ['error_output', 'capacity','source:capacity', 'width','offset']:
+        for attr in ['error_output', 'capacity', 'source:capacity', 'width', 'length', 'offset']:
             if attr in point_attribute_list:
                 point_attribute_list.remove(attr)
         point_attribute_list.append('angle')
-        point_attribute_list.remove('offset')
+        point_attribute_list.remove('offset') #FIX: why isn't offset deleted sucessfully in the step above!? (see also in line data cleanup above)
         layer_parking_chain = clearAttributes(layer_parking_chain, point_attribute_list)
 
         #offset to the left side of the line for reversed line directions/left hand traffic
