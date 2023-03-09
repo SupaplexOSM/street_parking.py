@@ -6,7 +6,7 @@
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2023-02-20                                                 #
+#   > version/date: 2023-03-07                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -22,7 +22,7 @@ from console.console import _console
 dir = _console.console.tabEditorWidget.currentWidget().path.replace("street_parking.py","")
 dir_input = dir + 'data/input.geojson'
 dir_output = dir + 'data/output/'
-
+geometrytype
 #coordinate reference system
 #Attention: EPSG:25833 (ETRS89 / UTM zone 33N) is used here – other CRS may be necessary at other locations.
 #A metric CRS is necessary to calculate with metre units and distances.
@@ -765,11 +765,13 @@ def getConditionClass(layer, feature, side):
     #residential parking only: private access and residential zone
     private_cond = getSubCondition(access_conditional, 'private', 1)
     if (access == 'private' or private_cond) and zone != '' and zone != 'no' and zone != 'none':
-        condition_class = addConditionClass(condition_class, 'residents', private_cond)
+        if condition_class != 'mixed':
+            condition_class = addConditionClass(condition_class, 'residents', private_cond)
 
     #paid public parking: fee, no access restrictions, no residential zone
     if (fee == 'yes' or fee_cond) and (access == 'yes' or access == '') and (zone == '' or zone == 'no' or zone == 'none'):
-        condition_class = addConditionClass(condition_class, 'paid', fee_cond)
+        if condition_class != 'mixed' and condition_class != 'residents':
+            condition_class = addConditionClass(condition_class, 'paid', fee_cond)
 
     #free parking (unmanaged parking: no fee or maxstay, no residential zone)
     if (fee == 'no' or no_fee_cond) and maxstay in ['', 'no', 'none'] and (access in ['', 'yes', 'destination', 'designated', 'permissive'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_designated) or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)) and zone in ['', 'no', 'none'] and (restriction in ['', 'no', 'none'] or listItemIn(['motorcar', 'bus', 'hgv', 'goods', 'motorhome'], vehicle_none_restriction)):
@@ -1452,7 +1454,7 @@ def processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_ker
     #derive missing capacities from area size
     capacity_dict = {} #save capacity per id in a dict temporarily
     for feature in layer_parking_areas.getFeatures():
-        capacity = NULL
+        capacity = orientation = NULL
         id = feature.attribute('id')
         if layer_parking_areas.fields().indexOf('capacity') != -1:
             capacity = feature.attribute('capacity')
