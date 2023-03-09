@@ -22,7 +22,7 @@ from console.console import _console
 dir = _console.console.tabEditorWidget.currentWidget().path.replace("street_parking.py","")
 dir_input = dir + 'data/input.geojson'
 dir_output = dir + 'data/output/'
-geometrytype
+
 #coordinate reference system
 #Attention: EPSG:25833 (ETRS89 / UTM zone 33N) is used here – other CRS may be necessary at other locations.
 #A metric CRS is necessary to calculate with metre units and distances.
