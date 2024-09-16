@@ -1,3 +1,4 @@
+2024-09-16 + "amenity=mobility_hub" and parking features with "position=lane/street_side/kerb_extension" are cutted from street parking segments
 2023-02-20 * condition_class remains NULL instead of "free" if parking fee isn't specified
 2023-02-16 + Added length (in m) and a unique id calculated from the coordinate to the attribute list, therefore changed name of "id" attribute to "osm_id"
 2023-02-16 + Added "location", "informal" and "operator:type" to the attribute list
