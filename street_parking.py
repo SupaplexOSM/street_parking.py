@@ -6,7 +6,7 @@
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2024-09-16                                                 #
+#   > version/date: 2024-10-07                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -1579,8 +1579,8 @@ def harmonizeSeparateParkingAttributes(layer, source, feature_dict):
         width = NULL
 
         #highway:name
-        if layer.fields().indexOf('street:name') != -1:
-            highway_name = feature.attribute('street:name')
+        if layer.fields().indexOf('object:street') != -1:
+            highway_name = feature.attribute('object:street')
         if not highway_name and layer.fields().indexOf('highway:highway:name') != -1:
             highway_name = feature.attribute('highway:highway:name')
 
