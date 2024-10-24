@@ -6,7 +6,7 @@
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2024-10-07                                                 #
+#   > version/date: 2024-10-24                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -149,6 +149,7 @@ parking_attribute_list = [
 'vehicle_excluded',
 'zone',
 'location',
+'staggered',
 'informal',
 'operator:type',
 'parking_source',
@@ -536,6 +537,7 @@ def prepareParkingLane(layer, side, clean):
     id_vehicle_excluded = layer.fields().indexOf('vehicle_excluded')
     id_zone = layer.fields().indexOf('zone')
     id_location = layer.fields().indexOf('location')
+    id_staggered = layer.fields().indexOf('staggered')
     id_informal = layer.fields().indexOf('informal')
     id_operator_type = layer.fields().indexOf('operator:type')
     id_parking_source = layer.fields().indexOf('parking_source')
@@ -555,6 +557,7 @@ def prepareParkingLane(layer, side, clean):
         vehicle_designated = vehicle_excluded = NULL
         zone = NULL
         location = NULL
+        staggered = NULL
         informal = NULL
         operator_type = NULL
         offset = NULL
@@ -615,19 +618,19 @@ def prepareParkingLane(layer, side, clean):
             source_capacity = 'OSM'
 
         #Parkbeschränkungen interpretieren
-        condition_class = getConditionClass(layer, feature, side)[0]
-        vehicle_designated = getConditionClass(layer, feature, side)[1]
-        vehicle_excluded = getConditionClass(layer, feature, side)[2]
+        condition_class, vehicle_designated, vehicle_excluded = getConditionClass(layer, feature, side)
 
         if condition_class == '':
             condition_class = NULL
-        if layer.fields().indexOf('parking:' + side + ':zone') != -1:
+        if layer.fields().indexOf('parking:' + side + ':zone') != -1 or layer.fields().indexOf('parking:both:zone') != -1:
             zone = getSideAttribute(layer, feature, side, 'zone', 0)
-        if layer.fields().indexOf('parking:' + side + ':location') != -1:
+        if layer.fields().indexOf('parking:' + side + ':location') != -1 or layer.fields().indexOf('parking:both:location') != -1:
             location = getSideAttribute(layer, feature, side, 'location', 0)
-        if layer.fields().indexOf('parking:' + side + ':informal') != -1:
+        if layer.fields().indexOf('parking:' + side + ':staggered') != -1 or layer.fields().indexOf('parking:both:staggered') != -1:
+            staggered = getSideAttribute(layer, feature, side, 'staggered', 0)
+        if layer.fields().indexOf('parking:' + side + ':informal') != -1 or layer.fields().indexOf('parking:both:informal') != -1:
             informal = getSideAttribute(layer, feature, side, 'informal', 0)
-        if layer.fields().indexOf('parking:' + side + ':operator:type') != -1:
+        if layer.fields().indexOf('parking:' + side + ':operator:type') != -1 or layer.fields().indexOf('parking:both:operator:type') != -1:
             operator_type = getSideAttribute(layer, feature, side, 'operator:type', 0)
         #adopt operator:type of street center line
         if not operator_type:
@@ -653,6 +656,7 @@ def prepareParkingLane(layer, side, clean):
         layer.changeAttributeValue(feature.id(), id_vehicle_excluded, vehicle_excluded)
         layer.changeAttributeValue(feature.id(), id_zone, zone)
         layer.changeAttributeValue(feature.id(), id_location, location)
+        layer.changeAttributeValue(feature.id(), id_staggered, staggered)
         layer.changeAttributeValue(feature.id(), id_informal, informal)
         layer.changeAttributeValue(feature.id(), id_operator_type, operator_type)
 
@@ -882,6 +886,7 @@ def getSideAttribute(layer, feature, side, key, stringsafe):
 
     if stringsafe and value == NULL:
         value = ''
+
     return value
 
 
@@ -1462,11 +1467,15 @@ def processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_ker
         if layer_parking_areas.fields().indexOf('orientation') != -1:
             orientation = feature.attribute('orientation')
         if not capacity and not orientation: #capacities of areas with orientation attribute are calculated later, using to the length of the line
+            #TODO derive capacity for all areas to identify lines that are significantly too shoort due to processing errors later
             capacity = math.floor(feature.geometry().area() / area_parking_place)
             capacity_dict[id] = capacity
 
+    #exclude parking areas in the middle of the road (median parking)
+    layer_parking_areas_without_median = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_parking_areas, 'EXPRESSION' : '"location" IS NOT \'lane_centre\' AND "location" IS NOT \'median\'', 'OUTPUT': 'memory:'})['OUTPUT']
+
     #convert street parking area polygons into lines
-    layer_parking_lines = processing.run('native:polygonstolines', { 'INPUT' : layer_parking_areas, 'OUTPUT': 'memory:'})['OUTPUT']
+    layer_parking_lines = processing.run('native:polygonstolines', { 'INPUT' : layer_parking_areas_without_median, 'OUTPUT': 'memory:'})['OUTPUT']
     #explode both line layers in single segments and get line directions/angles for every segment
     layer_parking_lines = processing.run('native:explodelines', { 'INPUT' : layer_parking_lines, 'OUTPUT': 'memory:'})['OUTPUT']
     layer_kerb = processing.run('native:explodelines', { 'INPUT' : layer_virtual_kerb, 'OUTPUT': 'memory:'})['OUTPUT']
@@ -1478,8 +1487,6 @@ def processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_ker
     #outer line represents the virtual kerb the parking lane is located/rendered at
     #inner line is needed for interpolate the parking orientation if not mapped
     layer_parking_lines_outer = processing.run('qgis:extractbyexpression', { 'INPUT' : layer_parking_lines, 'EXPRESSION' : 'abs("proc_line_angle" - "highway:proc_line_angle") < 25', 'OUTPUT': 'memory:'})['OUTPUT']
-
-    #TODO: Add inversed calculation for parking features on the street median/in the middle of the street
 
     #dissolve line segments with same id (= line segments of the same parking area)
     layer_parking_lines_outer = processing.run('native:dissolve', { 'FIELD' : ['id'], 'INPUT' : layer_parking_lines_outer, 'OUTPUT': 'memory:'})['OUTPUT']
@@ -1498,7 +1505,7 @@ def processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_ker
 
     for feature in layer.getFeatures():
         id = feature.attribute('id')
-        w = o = c = NULL
+        w = o = c = NULL #width/orientation/capacity
         width = NULL
         orientation = NULL
         capacity = NULL
@@ -1536,7 +1543,31 @@ def processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_ker
 
     #harmonize parking attributes
     layer = harmonizeSeparateParkingAttributes(layer, 'separate_area', feature_dict)
-    return(layer)
+
+    #look for osm_ids from the initial area layer, that are missing in the processed line layer and return them as an extra area layer (containing median parking and processing errors)
+    id_list_ways = []
+    for feature in layer.getFeatures():
+        id_list_ways.append(feature.attribute('id'))
+
+    QgsProject.instance().addMapLayer(layer_parking_areas, False)
+    layer_parking_areas.removeSelection()
+    missing_areas_capacity_dict = {}
+    for feature in layer_parking_areas.getFeatures():
+        id = feature.attribute('id')
+        if not id in id_list_ways:
+            #derive capacity from area geometry if it isn't specified in tagging
+            missing_areas_capacity_dict[id] = {}
+            if not feature.attribute('capacity'):
+                capacity = math.floor(feature.geometry().area() / area_parking_place)
+                missing_areas_capacity_dict[id]['capacity'] = capacity
+            layer_parking_areas.select(feature.id())
+
+    layer_parking_areas_missing = processing.run('native:saveselectedfeatures', { 'INPUT' : layer_parking_areas, 'OUTPUT': 'memory:'})['OUTPUT']
+
+    #harmonize parking attributes
+    layer_parking_areas_missing = harmonizeSeparateParkingAttributes(layer_parking_areas_missing, 'separate_area', missing_areas_capacity_dict)
+
+    return(layer, layer_parking_areas_missing)
 
 
 
@@ -1617,9 +1648,7 @@ def harmonizeSeparateParkingAttributes(layer, source, feature_dict):
                 width = width_perp
 
         #interprete parking restrictions
-        condition_class = getConditionClass(layer, feature, 'separate')[0]
-        vehicle_designated = getConditionClass(layer, feature, 'separate')[1]
-        vehicle_excluded = getConditionClass(layer, feature, 'separate')[2]
+        condition_class, vehicle_designated, vehicle_excluded = getConditionClass(layer, feature, 'separate')
 
         if condition_class == '':
             condition_class = NULL
@@ -1929,6 +1958,9 @@ if layers:
     if process_separate_parking:
         print(time.strftime('%H:%M:%S', time.localtime()), 'Include separate parking areas...')
         layer_parking_separate_areas = processSeparateParkingAreas(layer_parking, layer_polygons, layer_virtual_kerb)
+        #processSeparateParkingAreas returns a layer containing separate parking areas converted to lines and a second layer, containing parking areas that couldn't be transformed to lines (median parking and processing errors) 
+        layer_parking_separate_areas_missing = layer_parking_separate_areas[1]
+        layer_parking_separate_areas = layer_parking_separate_areas[0]
 
     #keep street parking segments free in the area of bus stops
     if buffer_bus_stop:
@@ -2046,6 +2078,10 @@ if layers:
     QgsProject.instance().addMapLayer(layer_parking, False)
     group_parking.insertChildNode(0, QgsLayerTreeLayer(layer_parking))
     layer_parking.loadNamedStyle(dir + 'styles/parking_lanes.qml')
+
+    layer_parking_separate_areas_missing.setName('street parking areas (unconverted)')
+    QgsProject.instance().addMapLayer(layer_parking_separate_areas_missing, False)
+    group_parking.insertChildNode(0, QgsLayerTreeLayer(layer_parking_separate_areas_missing))
 
     #convert street parking segments into chains of points for each individual vehicle
     if create_point_chain:
