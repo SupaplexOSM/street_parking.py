@@ -1,3 +1,6 @@
+2024-10-24 * Separately mapped parking areas that were not converted to lines (parking between lanes/on medians) or could not be converted due to processing errors are output as a separate area layer
+2024-10-24 + Added attribute for staggered parking
+2024-10-24 ! Some parking attributes were not interpreted if they only appeared as "both" but not as "left" or "right" in the data
 2024-10-07 * Use "object:street" instead of (rare) "street:name" to identify the adjacent street name of parking areas
 2024-09-16 + "amenity=mobility_hub" and parking features with "position=lane/street_side/kerb_extension" are cutted from street parking segments
 2023-02-20 * condition_class remains NULL instead of "free" if parking fee isn't specified
@@ -11,7 +14,7 @@
 2023-01-11 ! Fixed reading error for surface and markings attributes if specified for both sides
 2023-01-05 + Objects that are tagged with "obstacle:parking=yes" are cutted from street parking segments (important esp. for on kerb parking)
 2023-01-05 + Include bicycle renting stations on lane, non-motorized vehcile parking features on kerb extensions and restricted highway areas to cut street parking segments
-2023-01-01 * Renamed script "street_parking.py" (instead of "parking_lanes.py")
+2023-01-01 * Renamed script "street_parking.py" (instead of parking_lanes.py)
 2022-12-30 ! Fixed error in capacity calculation for divided segments with tagged capacity
 2022-12-30 + Missing highway and side attributes for separately mapped parking features are adopted from nearby streets
 2022-12-30 + Width of separately mapped areas are derived from geometry and missing orientations interpolated on this base
