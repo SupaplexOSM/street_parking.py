@@ -1,3 +1,5 @@
+2025-04-20 + Added inclusion of motorcycle parking with position tags (alternatively for parking tags)
+2025-04-20 + Added round_method variable ('floor' as default, e.g. capacity = 2.6 -> 2, or alternatively 'round': capacity = 2.6 -> 3)
 2024-10-24 * Separately mapped parking areas that were not converted to lines (parking between lanes/on medians) or could not be converted due to processing errors are output as a separate area layer
 2024-10-24 + Added attribute for staggered parking
 2024-10-24 ! Some parking attributes were not interpreted if they only appeared as "both" but not as "left" or "right" in the data
