@@ -3,7 +3,7 @@
 
 ## How to use
 
-1. Run [Overpass-Query](https://overpass-turbo.eu/s/1RfL) for road network and street parking data
+1. Run [Overpass-Query](https://overpass-turbo.eu/s/22Ce) for road network and street parking data
 2. Export result as GeoJSON to 'data/input.geojson'
 3. Run this python script in QGIS
    1. "Plugins" => "Python Console"
