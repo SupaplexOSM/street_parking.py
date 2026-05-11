@@ -1,6 +1,8 @@
 # street_parking.py for QGIS
 **Python script for QGIS to generate street parking data from OpenStreetMap (OSM) data**
 
+*Note: This script is no longer being actively developed, as this method is now being enhanced as part of the [OSM Parking Project](https://parkraum.osm-verkehrswende.org/) and the [TILDA parking software](https://fixmycity.de/tilda-parkraum/) to offer improved processing based on PostgreSQL.*
+
 ## How to use
 
 1. Run [Overpass-Query](https://overpass-turbo.eu/s/22Ce) for road network and street parking data
