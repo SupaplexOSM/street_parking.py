@@ -39,7 +39,7 @@ save_options.ct = QgsCoordinateTransform(QgsCoordinateReferenceSystem(crs_from),
 round_method = 'floor'
 
 #default width of streets (if not specified more precisely on the data object)
-width_minor_street = 11
+width_minor_street = 8
 width_primary_street = 17
 width_secondary_street = 15
 width_tertiary_street = 13
