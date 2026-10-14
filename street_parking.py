@@ -6,7 +6,7 @@
 #   and save the result at 'data/input.geojson' (or another directory, if      #
 #   specified otherwise in the directory variable) before running this script. #
 #                                                                              #
-#   > version/date: 2025-04-20                                                 #
+#   > version/date: 2026-10-14                                                 #
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -39,7 +39,7 @@ save_options.ct = QgsCoordinateTransform(QgsCoordinateReferenceSystem(crs_from),
 round_method = 'floor'
 
 #default width of streets (if not specified more precisely on the data object)
-width_minor_street = 8
+width_minor_street = 11
 width_primary_street = 17
 width_secondary_street = 15
 width_tertiary_street = 13
@@ -125,6 +125,7 @@ parking_processing_key_list = [
 'surface',
 'oneway',
 'operator:type',
+'layer',
 'width_proc',
 'width_proc:effective',
 'parking_source',
@@ -152,6 +153,7 @@ parking_attribute_list = [
 'vehicle_excluded',
 'zone',
 'location',
+'layer',
 'staggered',
 'informal',
 'operator:type',
@@ -254,7 +256,7 @@ def prepareLayers():
     QgsProject.instance().addMapLayer(layer_parking_lanes, False)
     with edit(layer_parking_lanes):
         for attr in parking_processing_key_list:
-            if attr != 'id' and attr != 'highway' and attr != 'parking_source' and attr != 'error_output':
+            if attr != 'id' and attr != 'highway' and attr != 'parking_source' and attr != 'error_output' and attr != 'layer':
                 layer_parking_lanes.renameAttribute(layer_parking_lanes.fields().indexOf(attr), 'highway:' + attr)
 
     #split up left and right street parking layer
