@@ -1,3 +1,4 @@
+2026-10-14 + Include the OSM layer tag in the result
 2026-06-25 * Changing width default for minor roads (8 instead of 11 m)
 2025-04-20 + Added inclusion of motorcycle parking with position tags (alternatively for parking tags)
 2025-04-20 + Added round_method variable ('floor' as default, e.g. capacity = 2.6 -> 2, or alternatively 'round': capacity = 2.6 -> 3)
